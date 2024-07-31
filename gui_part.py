@@ -1,4 +1,101 @@
-https://pythonpyqt.com/pyqt-box-layout/
+
+
+
+
+
+#PyQt grid layout (QGridLayout example)
+# The most frequently used layout class is grid layout, 
+# this layout divides the space into rows and columns.
+
+# It is an alternative to the box layout and default widget 
+# positining.
+
+# To create a grid layout, we use the class QGridLayout.
+#  A grid layout is an evenly divided area to which you can
+#  add widgets to each cell.
+
+
+
+
+
+
+
+
+
+
+
+
+#**************************  very important to spaceing 
+
+# import sys
+# from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout)
+
+# class Example(QWidget):
+#     def __init__(self):
+#         super().__init__()
+#         self.initUI()
+
+#     def initUI(self):
+#         okButton = QPushButton('OK')
+#         cancelButton = QPushButton('Cancel')
+#         #  QHBoxLayout and QVBoxLayout . for vertical and horizental box layout
+#         hbox = QHBoxLayout()
+#         hbox.addStretch(1)    # get flexible space to elements. 
+#         #widget in layouts . 
+#         hbox.addWidget(okButton)
+#         hbox.addWidget(cancelButton)
+#         vbox = QVBoxLayout()   # This line creates an instance of QVBoxLayout, a layout manager that arranges widgets vertically in a single column.
+#         vbox.addStretch(1)
+#         vbox.addLayout(hbox)
+#         self.setLayout(vbox)
+#         self.setGeometry(300, 300, 350, 150)
+#         self.setWindowTitle('Utilizing PyQt Box Layouts: QHBoxLayout and QVBoxLayout')  
+#         self.show()
+
+# if __name__ == '__main__':
+#  app = QApplication(sys.argv)
+#  ex = Example()
+#  sys.exit(app.exec_())
+######################### description of code by gpt 
+# Certainly! Let's break down the code snippet line by line to understand its functionality in PyQt5:
+
+# python
+# Copy code
+# hbox = QHBoxLayout()
+# This line creates an instance of QHBoxLayout, which is a layout manager that arranges widgets horizontally in a single row.
+# python
+# Copy code
+# hbox.addStretch(1)
+# This line adds a stretchable space to the hbox layout. The parameter 1 indicates the stretch factor, which determines how much space this stretchable element will take relative to other stretchable elements. In this case, it allows for flexible space to be distributed.
+# python
+# Copy code
+# hbox.addWidget(okButton)
+# This line adds the okButton widget to the hbox layout. This widget will be placed next to the stretchable space created earlier.
+# python
+# Copy code
+# hbox.addWidget(cancelButton)
+# This line adds the cancelButton widget to the hbox layout, positioned next to the okButton.
+# python
+# Copy code
+# vbox = QVBoxLayout()
+# This line creates an instance of QVBoxLayout, a layout manager that arranges widgets vertically in a single column.
+# python
+# Copy code
+# vbox.addStretch(1)
+# This line adds a stretchable space to the vbox layout, allowing for flexible vertical space distribution, similar to the horizontal stretchable space in hbox.
+# python
+# Copy code
+# vbox.addLayout(hbox)
+# This line adds the hbox layout to the vbox layout. This effectively nests the horizontal layout within the vertical layout, arranging the okButton and cancelButton widgets horizontally within the vertical layout.
+# In summary, this code sets up a layout with a vertical box layout (vbox) that contains a horizontal box layout (hbox). The hbox layout includes two buttons (okButton and cancelButton) and some stretchable space to control the spacing between the buttons. The vbox layout includes the hbox, along with a stretchable space at the top. This configuration is useful for creating a layout with buttons at the bottom of a window or dialog.
+
+
+
+
+
+
+
+# https://pythonpyqt.com/pyqt-box-layout/
 
 
 
