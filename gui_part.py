@@ -3,6 +3,574 @@
 
 
 
+
+
+
+# from PyQt5.Qt import *
+
+# import sys
+
+# app = QApplication(sys.argv)
+
+# w = QWidget()
+# w.setWindowTitle("QButtonGrounp")
+# w.resize (300, 150)
+
+# # Create 4 QRadioButton buttons
+# cs1 = QRadioButton ("Super Cup", w)
+# cs1.move(80, 20)
+
+# cs2 = QRadioButton ("Big Cup", w)
+# cs2.move(80, 40)
+
+# cs3 = QRadioButton ("Medium Cup", w)
+# cs3.move(80, 60)
+
+# cs4 = QRadioButton ("small cup", w)
+# cs4.move(80, 80)
+
+# # Create a key group and add keys
+# cs_group = QButtonGroup(w)
+# cs_group.addButton(cs1,1)
+# cs_group.addButton(cs2,2)
+# cs_group.addButton(cs3,3)
+# cs_group.addButton(cs4,4)
+
+# # Define the slot function and print the received parameters
+# def slot(object):
+#     print("Key was pressed, id is:", cs_group.id(object))
+
+# # connects the slot function and makes the argument of the band int type
+# cs_group.buttonClicked.connect(slot)
+# w.show()
+
+# if __name__ == '__main__':
+#     sys.exit(app.exec_())
+
+
+
+
+# from PyQt5.Qt import *
+# import sys
+
+# app = QApplication(sys.argv)
+
+# w = QWidget()
+# w.setWindowTitle("QButtonGroup")
+# w.resize (300, 150)
+
+# #Create group 1 QRadioButton button
+# cs1 = QRadioButton("1st",w)
+# cs1.move(20, 20)
+
+# #Setting the first radio box to be checked
+# cs1.setChecked(True)
+# cs2 = QRadioButton("2nd",w)
+# cs2.move(20, 40)
+
+# #Create a key group and add keys
+# cs_group = QButtonGroup(w)
+# cs_group.addButton(cs1, 1)
+# cs_group.addButton(cs2, 2)
+
+# #move cs2 key out of sc_group
+# cs_group.removeButton(cs2)
+
+# w.show()
+
+# if __name__ == '__main__':
+#     sys.exit(app.exec_())
+
+
+
+
+# from PyQt5.Qt import *
+# import sys
+
+# app = QApplication(sys.argv)
+
+# w = QWidget()
+# w.setWindowTitle("QButtonGroup")
+# w.resize (300, 150)
+
+# #Create group 1 QRadioButton button
+# cs1 = QRadioButton ("Super Cup", w)
+# cs1.move(80, 20)
+
+# cs2 = QRadioButton ("Big Cup", w)
+# cs2.move(80, 40)
+
+# cs3 = QRadioButton ("Medium Cup", w)
+# cs3.move(80, 60)
+
+# cs4 = QRadioButton ("small cup", w)
+# cs4.move(80, 80)
+
+# #Create a key group and add keys
+# cs_group = QButtonGroup(w)
+# cs_group.addButton(cs1)
+# cs_group.addButton(cs2)
+# cs_group.addButton(cs3)
+# cs_group.addButton(cs4)
+
+# # Set cs_group to not be mutually exclusive
+# cs_group.setExclusive(False)
+
+# w.show()
+
+# if __name__ == '__main__':
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+# from PyQt5.Qt import *
+# import sys
+
+# app = QApplication(sys.argv)
+
+# w = QWidget()
+# w.setWindowTitle("QButtonGrounp")
+# w.resize(300, 150)
+
+# cs1 = QRadioButton("Answer A",w)
+# cs1.move(20, 20)
+# cs1.setChecked(True)
+
+# cs2 = QRadioButton("Answer B",w)
+# cs2.move(20, 40)
+
+# cs_group = QButtonGroup(w)
+# cs_group.addButton(cs1, 1)      # ID 1
+# cs_group.addButton(cs2, 2)      # ID 2
+
+# print(cs_group.buttons())
+# print(cs_group.button(2))       # ID=2
+# print(cs_group.checkedButton())
+
+# w.show()
+
+# if __name__ == '__main__':
+#     sys.exit(app.exec_())
+
+
+# # *************** important radio buttons
+# from PyQt5.Qt import *
+# import sys    
+
+# app = QApplication(sys.argv)
+
+# w = QWidget()
+# w.setWindowTitle("QButtonGrounp")
+# w.resize(300, 150)
+
+# cs1 = QRadioButton("Beginner",w)
+# cs1.move(130, 20)
+
+# cs2 = QRadioButton("Senior",w)
+# cs2.move(130, 40)
+
+# cs3 = QRadioButton("Expert",w)
+# cs3.move(130, 60)
+
+# cs4 = QRadioButton("Best",w)
+# cs4.move(130, 80)
+
+# cs_group = QButtonGroup(w)
+# cs_group.addButton(cs1)
+# cs_group.addButton(cs2)
+# cs_group.addButton(cs3)
+# cs_group.addButton(cs4)
+
+# drs1 = QRadioButton("Python",w)
+# drs1.move(20, 20)
+
+# drs2 = QRadioButton("Golang",w)
+# drs2.move(20, 40)
+
+# drs3 = QRadioButton("Java",w)
+# drs3.move(20, 60)
+
+# drs_group = QButtonGroup(w)
+# drs_group.addButton(drs1)
+# drs_group.addButton(drs2)
+# drs_group.addButton(drs3)
+
+# w.show()
+
+# if __name__ == '__main__':
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+
+# import sys
+# from PyQt5.QtWidgets import QWidget,QPushButton,QApplication,QListWidget,QGridLayout,QLabel
+# from PyQt5.QtCore import QTimer,QDateTime
+
+# class WinForm(QWidget):
+#     def __init__(self,parent=None):
+#         super(WinForm, self).__init__(parent)
+#         self.setWindowTitle('QTimer demonstration')
+
+#         self.listFile=QListWidget()
+#         self.label=QLabel('Label')
+#         self.startBtn=QPushButton('Start')
+#         self.endBtn=QPushButton('Stop')
+
+#         layout=QGridLayout()
+
+#         self.timer=QTimer()
+#         self.timer.timeout.connect(self.showTime)
+
+#         layout.addWidget(self.label,0,0,1,2)
+#         layout.addWidget(self.startBtn,1,0)
+#         layout.addWidget(self.endBtn,1,1)
+
+#         self.startBtn.clicked.connect(self.startTimer)
+#         self.endBtn.clicked.connect(self.endTimer)
+
+#         self.setLayout(layout)
+
+#     def showTime(self):
+#         current_time=QDateTime.currentDateTime()
+#         formatted_time=current_time.toString('yyyy-MM-dd hh:mm:ss dddd')
+#         self.label.setText(formatted_time)
+
+#     def startTimer(self):
+#         self.timer.start(1000)
+#         self.startBtn.setEnabled(False)
+#         self.endBtn.setEnabled(True)
+
+#     def endTimer(self):
+#         self.timer.stop()
+#         self.startBtn.setEnabled(True)
+#         self.endBtn.setEnabled(False)
+
+# if __name__ == '__main__':
+#     app=QApplication(sys.argv)
+#     form=WinForm()
+#     form.show()
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+#***************  important   drag and drop
+#*************** 2 main part is important.
+# import sys
+# from PyQt5.QtGui import *
+# from PyQt5.QtCore import *
+# from PyQt5.QtWidgets import *
+
+# class CustomDropList(QListWidget):
+#     def __init__(self):
+#         super(CustomDropList, self).__init__()
+#         self.setAcceptDrops(True)
+
+#     def handleDropEvent(self, dropEvent):
+#         sourceList = dropEvent.source()
+#         selectedItems = sourceList.selectedItems()
+#         for item in selectedItems:
+#             sourceList.takeItem(sourceList.indexFromItem(item).row())
+#             self.addItem(item)
+#         print('Completed Drop Operation')
+
+# class DragDropDemo(QWidget):
+#     def __init__(self):
+#         super(DragDropDemo, self).__init__()
+#         self.setWindowTitle('Drag and Drop QListWidget Demo')
+#         layout = QHBoxLayout()
+#         self.leftList = CustomDropList()
+#         self.rightList = QListWidget()
+#         initialItems = ['Item A', 'Item B', 'Item C']
+#         self.rightList.addItems(initialItems)
+#         self.rightList.setDragEnabled(True)
+#         self.rightList.setDragDropOverwriteMode(False)
+#         self.rightList.setSelectionMode(QAbstractItemView.ExtendedSelection)
+#         self.rightList.setDefaultDropAction(Qt.MoveAction)
+#         layout.addWidget(self.leftList)
+#         layout.addWidget(self.rightList)
+#         self.setLayout(layout)
+
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     demoWidget = DragDropDemo()
+#     demoWidget.show()
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+# import sys
+# from PyQt5.QtCore import *
+# from PyQt5.QtGui import *
+# from PyQt5.QtWidgets import *
+
+# class ListWidgetDemo(QListWidget):
+#     def onItemClicked(self, item):
+#         QMessageBox.information(self, "QListWidget Interaction", "You selected: " + item.text())
+
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     demoListWidget = ListWidgetDemo()
+
+#     demoListWidget.resize(300, 120)
+#     demoListWidget.addItem("Option 1")
+#     demoListWidget.addItem("Option 2")
+#     demoListWidget.addItem("Option 3")
+#     demoListWidget.addItem("Option 4")
+#     demoListWidget.setWindowTitle('QListWidget Demonstration')
+#     demoListWidget.itemClicked.connect(demoListWidget.onItemClicked)
+
+#     demoListWidget.show()
+#     sys.exit(app.exec_())
+
+
+
+
+
+#********* important 
+# import sys
+# from PyQt5.QtCore import *
+# from PyQt5.QtGui import *
+# from PyQt5.QtWidgets import *
+
+# class DockDemo(QMainWindow):
+#     def __init__(self,parent=None):
+#         super(DockDemo, self).__init__(parent)
+#         layout=QHBoxLayout()
+#         bar=self.menuBar()
+#         file=bar.addMenu('File')
+#         file.addAction('New')
+#         file.addAction('Save')
+#         file.addAction('quit')
+
+#         self.items=QDockWidget('Dockable',self)
+
+#         self.listWidget=QListWidget()
+#         self.listWidget.addItem('Item1')
+#         self.listWidget.addItem('Item2')
+#         self.listWidget.addItem('Item3')
+#         self.listWidget.addItem('Item4')
+
+#         self.items.setWidget(self.listWidget)
+#         self.items.setFloating(False)
+#         self.setCentralWidget(QTextEdit())
+#         self.addDockWidget(Qt.RightDockWidgetArea,self.items)
+
+#         self.setLayout(layout)
+#         self.setWindowTitle('Dock Demo with PyQt')
+
+# if __name__ == '__main__':
+#     app=QApplication(sys.argv)
+#     demo=DockDemo()
+#     demo.show()
+#     sys.exit(app.exec_())
+
+
+#     Finally, the QWidget is set up within the
+#  window area, and list control is added through:
+# self.items.setWidget(self.listWidget)
+
+# #input dialog 
+# import sys
+# from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QInputDialog
+
+# class Example(QWidget):
+#     def __init__(self):
+#         super().__init__()
+#         self.initUI()
+
+#     def initUI(self):
+#         self.btn = QPushButton('Show Dialog', self)
+#         self.btn.move(20, 20)
+#         self.btn.clicked.connect(self.showDialog)
+
+#         self.le = QLineEdit(self)
+#         self.le.move(130, 22)
+
+#         self.setGeometry(300, 300, 300, 150)
+#         self.setWindowTitle('Input Dialog')        
+#         self.show()
+
+#     def showDialog(self):
+#         text, ok = QInputDialog.getText(self, 'input dialog', 'Is this ok?')
+#         if ok:
+#             self.le.setText(str(text))
+
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     ex = Example()
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+# #progress bar 
+# from random import randint
+# import sys
+# from PyQt5.QtCore import QTimer
+# from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QProgressBar
+ 
+# StyleSheet = '''
+# #RedProgressBar {
+#     text-align: center;
+# }
+# #RedProgressBar::chunk {
+#     background-color: #F44336;
+# }
+# #GreenProgressBar {
+#     min-height: 12px;
+#     max-height: 12px;
+#     border-radius: 6px;
+# }
+# #GreenProgressBar::chunk {
+#     border-radius: 6px;
+#     background-color: #009688;
+# }
+# #BlueProgressBar {
+#     border: 2px solid #2196F3;
+#     border-radius: 5px;
+#     background-color: #E0E0E0;
+# }
+# #BlueProgressBar::chunk {
+#     background-color: #2196F3;
+#     width: 10px; 
+#     margin: 0.5px;
+# }
+# '''
+ 
+ 
+# class ProgressBar(QProgressBar):
+ 
+#     def __init__(self, *args, **kwargs):
+#         super(ProgressBar, self).__init__(*args, **kwargs)
+#         self.setValue(0)
+#         if self.minimum() != self.maximum():
+#             self.timer = QTimer(self, timeout=self.onTimeout)
+#             self.timer.start(randint(1, 3) * 1000)
+ 
+#     def onTimeout(self):
+#         if self.value() >= 100:
+#             self.timer.stop()
+#             self.timer.deleteLater()
+#             del self.timer
+#             return
+#         self.setValue(self.value() + 1)
+ 
+ 
+# class Window(QWidget):
+ 
+#     def __init__(self, *args, **kwargs):
+#         super(Window, self).__init__(*args, **kwargs)
+#         self.resize(800, 600)
+#         layout = QVBoxLayout(self)
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=100, objectName="RedProgressBar"))
+ 
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=0, objectName="RedProgressBar"))
+ 
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=100, textVisible=False,
+#                         objectName="GreenProgressBar"))
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=0, textVisible=False,
+#                         objectName="GreenProgressBar"))
+ 
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=100, textVisible=False,
+#                         objectName="BlueProgressBar"))
+#         layout.addWidget(  
+#             ProgressBar(self, minimum=0, maximum=0, textVisible=False,
+#                         objectName="BlueProgressBar"))
+ 
+ 
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     app.setStyleSheet(StyleSheet)
+#     w = Window()
+#     w.show()
+#     sys.exit(app.exec_())
+# import sys
+# import time
+# from PyQt5.QtCore import QThread, pyqtSignal
+# from PyQt5.QtWidgets import QWidget, QPushButton, QProgressBar, QVBoxLayout, QApplication
+
+# class Thread(QThread):
+#     _signal = pyqtSignal(int)
+#     def __init__(self):
+#         super(Thread, self).__init__()
+
+#     def __del__(self):
+#         self.wait()
+
+#     def run(self):
+#         for i in range(100):
+#             time.sleep(0.1)
+#             self._signal.emit(i)
+ 
+# class Example(QWidget):
+#     def __init__(self):
+#         super(Example, self).__init__()
+#         self.setWindowTitle('QProgressBar')
+#         self.btn = QPushButton('Click me')
+#         self.btn.clicked.connect(self.btnFunc)
+#         self.pbar = QProgressBar(self)
+#         self.pbar.setValue(0)
+#         self.resize(300, 100)
+#         self.vbox = QVBoxLayout()
+#         self.vbox.addWidget(self.pbar)
+#         self.vbox.addWidget(self.btn)
+#         self.setLayout(self.vbox)
+#         self.show()
+        
+#     def btnFunc(self):
+#         self.thread = Thread()
+#         self.thread._signal.connect(self.signal_accept)
+#         self.thread.start()
+#         self.btn.setEnabled(False)
+
+#     def signal_accept(self, msg):
+#         self.pbar.setValue(int(msg))
+#         if self.pbar.value() == 99:
+#             self.pbar.setValue(0)
+#             self.btn.setEnabled(True)
+ 
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     ex = Example()
+#     ex.show()
+#     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
 #PyQt grid layout (QGridLayout example)
 # The most frequently used layout class is grid layout, 
 # this layout divides the space into rows and columns.
@@ -14,7 +582,42 @@
 #  A grid layout is an evenly divided area to which you can
 #  add widgets to each cell.
 
-
+# import sys
+# from PyQt5.QtWidgets import (QApplication, QWidget,
+# QPushButton, QGridLayout)
+ 
+# class Example(QWidget):
+ 
+#     def __init__(self):
+#         super().__init__()
+#         self.initUI()
+     
+#     def initUI(self):   
+#         grid = QGridLayout()  
+#         self.setLayout(grid)
+      
+#         names = ['Cls', 'Bck', '', 'Close', 
+#         '7', '8', '9', '/',
+#         '4', '5', '6', '*',
+#         '1', '2', '3', '-',
+#         '0', '.', '=', '+',]
+      
+#         positions = [(i, j) for i in range(5) for j in range(4)] # This is the button label to be used later.
+      
+#         for position, name in zip(positions, names):
+#          if name == '':
+#           continue
+#          button = QPushButton(name)
+#          grid.addWidget(button, *position)
+      
+#         self.move(300, 150)
+#         self.setWindowTitle('PyQt window')  
+#         self.show()
+    
+# if __name__ == '__main__':
+#      app = QApplication(sys.argv)
+#      ex = Example()
+#      sys.exit(app.exec_()) 
 
 
 
