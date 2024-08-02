@@ -3,6 +3,16 @@
 
 
 
+print('\u280E')
+
+
+h = open('test.txt' , 'w') 
+h.write(chr(0x280F))
+h.close()
+
+
+
+
 
 
 
