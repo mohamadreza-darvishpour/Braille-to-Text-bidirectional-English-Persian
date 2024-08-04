@@ -5,6 +5,8 @@ class translator():
     lang_braille_base_dict = {}
     {
         'persian' : {
+    '\u2800': ' ',
+    '\u2840': 'آ' 
     '\u2801': 'ا',
     '\u2803': 'ب',
     '\u2809': 'پ',
@@ -54,6 +56,7 @@ class translator():
             },
 
         'english' : {
+    '\u2800': ' ',
     '\u2801': 'A',
     '\u2803': 'B',
     '\u2809': 'C',
