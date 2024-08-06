@@ -48,7 +48,8 @@ lang_braille_base_dict ={
     '\u2816': '7',
     '\u2836': '8',
     '\u2826': '9',
-    '\u2810': '0'
+    '\u2810': '0',
+    '': ''
             },
 
         'english' : {
@@ -135,34 +136,7 @@ def find_key_by_value(dictionary, value):
 
 class translator():
     langs = lang_braille_base_dict.copy()
-
-    def braille_to_lang(self , lang , text ):
-        try:
-            dict = self.langs[lang]
-        except:
-            dict = self.langs['persian']
-        string  = '' 
-        for any in text:
-            temp = find_value_by_key(dict , any )
-            string += temp 
-        print(string)
-        return string
-
-    def lang_to_braille(self , lang , text ):
-        try:
-            dict = self.langs[lang]
-        except:
-            dict = self.langs['persian']
-        string  = '' 
-        for any in text:
-            temp = find_key_by_value(dict , any)
-            string += temp 
-        print(string)
-        return string
-
-    def add_lang(self ,  lang_name:str , the_str):
-        alphabet_string_exam = '''
-
+    alphabet_string_exam = '''
 space  =  {},
 ⠁  =  {},
 ⠂  =  {},
@@ -253,17 +227,49 @@ space  =  {},
 ⡖  =  {},
 ⡘  =  {}
 '''
-        the_str = the_str.replace('\n' , '') 
-        the_str = the_str.replace('  ' , '') 
-        the_str = the_str.replace('}' , '') 
-        the_str = the_str.replace('{' , '') 
-        the_str = the_str.split(',') 
-        temp_dict = {}
-        for item in the_str:
-            temp = item.split('=')
-            temp_dict[temp[0]] = temp[1]
-        temp_dict['⠀'] = temp_dict.pop('space')
-        print(temp_dict)
+ 
+    def braille_to_lang(self , lang='english', text = '' ):
+        try:
+            dict = self.langs[lang]
+        except:
+            dict = self.langs['english']
+            string = 'could not find language chars...' 
+            return string
+        string  = ''
+        for any in text:
+            temp = find_value_by_key(dict , any )
+            string += temp 
+        print(string)
+        return string
+
+    def lang_to_braille(self , lang='english' , text='' ):
+        try:
+            dict = self.langs[lang]
+        except:
+            dict = self.langs['english']
+        string  = '' 
+        for any in text:
+            temp = find_key_by_value(dict , any)
+            string += temp 
+        print(string)
+        return string
+
+    def add_lang(self ,  lang_name:str , the_str):
+        try:
+            the_str = the_str.replace('\n' , '') 
+            the_str = the_str.replace('  ' , '') 
+            the_str = the_str.replace('}' , '') 
+            the_str = the_str.replace('{' , '') 
+            the_str = the_str.split(',') 
+            temp_dict = {}
+            for item in the_str:
+                temp = item.split('=')
+                temp_dict[temp[0]] = temp[1]
+            temp_dict['⠀'] = temp_dict.pop('space')
+            self.langs[lang_name] = temp_dict
+            return f'{lang_name} added successfully.' 
+        except:
+            return f'not success to add new language. try again.'
 
 term = '''
 
