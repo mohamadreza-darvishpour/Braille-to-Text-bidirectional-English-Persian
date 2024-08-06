@@ -1,12 +1,8 @@
 
-
-
-class translator():
-    lang_braille_base_dict = {}
-    {
+lang_braille_base_dict ={
         'persian' : {
     '\u2800': ' ',
-    '\u2840': 'آ' 
+    '\u2840': 'آ',
     '\u2801': 'ا',
     '\u2803': 'ب',
     '\u2809': 'پ',
@@ -122,4 +118,53 @@ class translator():
             }
     }
 
-    pass 
+
+def find_value_by_key(dictionary, key):
+    if key in dictionary:
+        return dictionary[key]
+    else:
+        return '{?}'
+
+
+def find_key_by_value(dictionary, value):
+    for key, val in dictionary.items():
+        if val == value:
+            return key
+    return '{?}'
+
+
+class translator():
+    langs = lang_braille_base_dict.copy()
+
+    def braille_to_lang(self , lang , text ):
+        try:
+            dict = self.langs[lang]
+        except:
+            dict = self.langs['persian']
+        string  = '' 
+        for any in text:
+            temp = find_value_by_key(dict , any )
+            string += temp 
+        print(string)
+        return string
+
+    def lang_to_braille(self , lang , text ):
+        try:
+            dict = self.langs[lang]
+        except:
+            dict = self.langs['persian']
+        string  = '' 
+        for any in text:
+            temp = find_key_by_value(dict , any)
+            string += temp 
+        print(string)
+        return string
+
+
+
+
+
+
+d = translator() 
+d.braille_to_lang('persian' , '⠗⠁⠓⠏⠽⠗⠺⠵')
+d.lang_to_braille('persian' , 'سر و صدا ')
