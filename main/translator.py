@@ -239,7 +239,6 @@ space  =  {},
         for any in text:
             temp = find_value_by_key(dict , any )
             string += temp 
-        print(string)
         return string
 
     def lang_to_braille(self , lang='english' , text='' ):
@@ -247,11 +246,12 @@ space  =  {},
             dict = self.langs[lang]
         except:
             dict = self.langs['english']
+            string = 'could not find language chars...' 
+            return string
         string  = '' 
         for any in text:
             temp = find_key_by_value(dict , any)
             string += temp 
-        print(string)
         return string
 
     def add_lang(self ,  lang_name:str , the_str):
