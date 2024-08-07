@@ -183,10 +183,12 @@ class Window3(QWidget):
 
 
 class Window4(QWidget):
+    '''add new language in braille'''
     def __init__(self):
         super().__init__()
 
-        self.default_text = "default text to use"
+        self.default_text = translate.alphabet_string_exam
+        
 
         layout = QVBoxLayout()
 
@@ -195,7 +197,7 @@ class Window4(QWidget):
 
         # Input field for method name
         self.method_name_input = QLineEdit()
-        self.method_name_input.setPlaceholderText("Enter the name of the method")
+        self.method_name_input.setPlaceholderText("Enter name of new language or language to edit.")
         layout.addWidget(self.method_name_input)
 
         # Input text field with default text
@@ -218,7 +220,9 @@ class Window4(QWidget):
         options_label = QLabel("Options")
         options_layout.addWidget(options_label)
         self.option_combo = QComboBox()
-        self.option_combo.addItems(["Option 1", "Option 2", "Option 3"])
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        self.option_combo.addItems(lang_list)
         self.option_combo.currentIndexChanged.connect(self.option_changed)
         options_layout.addWidget(self.option_combo)
         layout.addLayout(options_layout)
@@ -255,11 +259,14 @@ class Window4(QWidget):
 
     def option_custom_func(self, option):
         # Custom function to return a text based on the option
-        option_texts = {
-            "Option 1": "Text for Option 1",
-            "Option 2": "Text for Option 2",
-            "Option 3": "Text for Option 3",
-        }
+        option_texts = {  'languages' : translate.alphabet_string_exam}
+        for lang_key in translate.langs.keys() :
+            string = ''
+            for key,value in translate.langs[lang_key].items() :
+                if key == '⠀': key = 'space'
+                string +='  ' + key + '  =  {' + value +'},\n'
+            option_texts[lang_key] = string
+
         return option_texts.get(option, self.default_text)
 
     def update_options(self, text):
