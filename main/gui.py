@@ -7,13 +7,11 @@ translate = translator()
 braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
 
 def custom_translator(lang, braille_text):
-    print('\n\n\n****', lang, '****')
     text = translate.braille_to_lang(lang, braille_text)
     return "Translated text for: " + text
 
 
 def to_braille_custom_translator(lang, braille_text):
-    print('\n\n\n****', lang, '****')
     text = translate.lang_to_braille(lang, braille_text)
     return "Translated text for: " + text
 
@@ -57,7 +55,6 @@ class toBrailleTranslator(QWidget):
         language = self.language_input.text()  # Get the language from the QLineEdit
         translated_text = to_braille_custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
-        print(f"Translating Braille: {braille_text} to {language} -> {translated_text}")
 
 
 class BrailleTranslator(QWidget):
@@ -95,7 +92,6 @@ class BrailleTranslator(QWidget):
         language = self.language_input.text()  # Get the language from the QLineEdit
         translated_text = custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
-        print(f"Translating Braille: {braille_text} to {language} -> {translated_text}")
 
 class BrailleKeyboard(QWidget):
     def __init__(self, input_area):
@@ -185,12 +181,91 @@ class Window3(QWidget):
 
 
 
+
 class Window4(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.default_text = "default text to use"
+
         layout = QVBoxLayout()
+
+        # Label
         layout.addWidget(QLabel("This is Window 4"))
+
+        # Input field for method name
+        self.method_name_input = QLineEdit()
+        self.method_name_input.setPlaceholderText("Enter the name of the method")
+        layout.addWidget(self.method_name_input)
+
+        # Input text field with default text
+        self.text_input = QTextEdit(self.default_text)
+        self.text_input.setFixedHeight(200)  # Set the preferred height to make it bigger
+        layout.addWidget(self.text_input)
+
+        # Button to reset text
+        self.reset_button = QPushButton("Reset Text")
+        self.reset_button.clicked.connect(self.reset_text)
+        layout.addWidget(self.reset_button)
+
+        # Button to send text to custom function
+        self.send_button = QPushButton("Send Text")
+        self.send_button.clicked.connect(self.send_text)
+        layout.addWidget(self.send_button)
+
+        # Options label and combo box
+        options_layout = QVBoxLayout()
+        options_label = QLabel("Options")
+        options_layout.addWidget(options_label)
+        self.option_combo = QComboBox()
+        self.option_combo.addItems(["Option 1", "Option 2", "Option 3"])
+        self.option_combo.currentIndexChanged.connect(self.option_changed)
+        options_layout.addWidget(self.option_combo)
+        layout.addLayout(options_layout)
+
         self.setLayout(layout)
+
+    def reset_text(self):
+        self.text_input.setText(self.default_text)
+        self.method_name_input.clear()
+        self.option_combo.setCurrentIndex(0)
+
+    def send_text(self):
+        method_name = self.method_name_input.text()
+        text = self.text_input.toPlainText()
+        self.add_text(method_name, text)
+        self.update_options(text)
+        self.reset_text()
+
+    def add_text(self, method_name, text):
+        # Custom function to handle the method name and text
+        print(f"Method: {method_name}, Text: {text}")
+        self.show_popup()
+
+    def show_popup(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("Text added successfully")
+        msg.setWindowTitle("Information")
+        msg.exec_()
+
+    def option_changed(self, index):
+        option_text = self.option_custom_func(self.option_combo.itemText(index))
+        self.text_input.setText(option_text)
+
+    def option_custom_func(self, option):
+        # Custom function to return a text based on the option
+        option_texts = {
+            "Option 1": "Text for Option 1",
+            "Option 2": "Text for Option 2",
+            "Option 3": "Text for Option 3",
+        }
+        return option_texts.get(option, self.default_text)
+
+    def update_options(self, text):
+        self.option_combo.addItem(text)
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -229,3 +304,11 @@ if __name__ == '__main__':
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
