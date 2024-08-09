@@ -199,6 +199,7 @@ class Window4(QWidget):
         self.method_name_input = QLineEdit()
         self.method_name_input.setPlaceholderText("Enter name of new language or language to edit.")
         layout.addWidget(self.method_name_input)
+        self.method_name_input.textChanged.connect(self.new_lang_name)
 
         # Input text field with default text
         self.text_input = QTextEdit(self.default_text)
@@ -228,6 +229,11 @@ class Window4(QWidget):
         layout.addLayout(options_layout)
 
         self.setLayout(layout)
+    
+
+    def new_lang_name(self  , text ):
+        self.new_lang = text 
+        
 
     def reset_text(self):
         self.text_input.setText(self.default_text)
@@ -236,20 +242,22 @@ class Window4(QWidget):
 
     def send_text(self):
         method_name = self.method_name_input.text()
+        self.new_lang_name = method_name
         text = self.text_input.toPlainText()
-        self.add_text(method_name, text)
-        self.update_options(text)
+        self.add_text(self.new_lang_name, text)
+        self.update_options(method_name)
         self.reset_text()
 
-    def add_text(self, method_name, text):
+    def add_text(self ,  method_name , text):
         # Custom function to handle the method name and text
-        print(f"Method: {method_name}, Text: {text}")
+        print(f'\n\n3223   methodname ={method_name} , text = {text} 3223\n\n')
+        self.alarm = translate.add_lang(method_name , text)
         self.show_popup()
 
     def show_popup(self):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
-        msg.setText("Text added successfully")
+        msg.setText(self.alarm)
         msg.setWindowTitle("Information")
         msg.exec_()
 
@@ -257,7 +265,7 @@ class Window4(QWidget):
         option_text = self.option_custom_func(self.option_combo.itemText(index))
         self.text_input.setText(option_text)
 
-    def option_custom_func(self, option):
+    def option_custom_func(self, option_index):
         # Custom function to return a text based on the option
         option_texts = {  'languages' : translate.alphabet_string_exam}
         for lang_key in translate.langs.keys() :
@@ -266,11 +274,12 @@ class Window4(QWidget):
                 if key == '⠀': key = 'space'
                 string +='  ' + key + '  =  {' + value +'},\n'
             option_texts[lang_key] = string
+        # option_texts[self.new_lang_name] = option
 
-        return option_texts.get(option, self.default_text)
+        return option_texts.get(option_index, self.default_text)
 
-    def update_options(self, text):
-        self.option_combo.addItem(text)
+    def update_options(self, new_item):
+        self.option_combo.addItem(new_item)
 
 
 

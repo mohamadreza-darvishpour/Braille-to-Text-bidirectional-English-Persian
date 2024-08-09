@@ -136,97 +136,8 @@ def find_key_by_value(dictionary, value):
 
 class translator():
     langs = lang_braille_base_dict.copy()
-    alphabet_string_exam = '''
-space  =  {},
-⠁  =  {},
-⠂  =  {},
-⠃  =  {},
-⠄  =  {},
-⠅  =  {},
-⠆  =  {},
-⠇  =  {},
-⠈  =  {},
-⠉  =  {},
-⠊  =  {},
-⠋  =  {},
-⠌  =  {},
-⠍  =  {},
-⠎  =  {},
-⠏  =  {},
-⠐  =  {},
-⠑  =  {},
-⠒  =  {},
-⠓  =  {},
-⠔  =  {},
-⠕  =  {},
-⠖  =  {},
-⠗  =  {},
-⠘  =  {},
-⠙  =  {},
-⠚  =  {},
-⠛  =  {},
-⠜  =  {},
-⠝  =  {},
-⠞  =  {},
-⠟  =  {},
-⠠  =  {},
-⠡  =  {},
-⠢  =  {},
-⠣  =  {},
-⠤  =  {},
-⠥  =  {},
-⠦  =  {},
-⠧  =  {},
-⠨  =  {},
-⠩  =  {},
-⠪  =  {},
-⠫  =  {},
-⠬  =  {},
-⠭  =  {},
-⠮  =  {},
-⠯  =  {},
-⠰  =  {},
-⠱  =  {},
-⠲  =  {},
-⠳  =  {},
-⠴  =  {},
-⠵  =  {},
-⠶  =  {},
-⠷  =  {},
-⠸  =  {},
-⠹  =  {},
-⠺  =  {},
-⠻  =  {},
-⠼  =  {},
-⠽  =  {},
-⠾  =  {},
-⠿  =  {},
-⡀  =  {},
-⡁  =  {},
-⡂  =  {},
-⡃  =  {},
-⡄  =  {},
-⡅  =  {},
-⡆  =  {},
-⡇  =  {},
-⡈  =  {},
-⡉  =  {},
-⡊  =  {},
-⡋  =  {},
-⡌  =  {},
-⡍  =  {},
-⡎  =  {},
-⡏  =  {},
-⡐  =  {},
-⡑  =  {},
-⡒  =  {},
-⡓  =  {},
-⡕  =  {},
-⡔  =  {},
-⡗  =  {},
-⡖  =  {},
-⡘  =  {}
-'''
+    alphabet_string_exam = "\nspace  =  {},\n⠁  =  {},\n⠂  =  {},\n⠃  =  {},\n⠄  =  {},\n⠅  =  {},\n⠆  =  {},\n⠇  =  {},\n⠈  =  {},\n⠉  =  {},\n⠊  =  {},\n⠋  =  {},\n⠌  =  {},\n⠍  =  {},\n⠎  =  {},\n⠏  =  {},\n⠐  =  {},\n⠑  =  {},\n⠒  =  {},\n⠓  =  {},\n⠔  =  {},\n⠕  =  {},\n⠖  =  {},\n⠗  =  {},\n⠘  =  {},\n⠙  =  {},\n⠚  =  {},\n⠛  =  {},\n⠜  =  {},\n⠝  =  {},\n⠞  =  {},\n⠟  =  {},\n⠠  =  {},\n⠡  =  {},\n⠢  =  {},\n⠣  =  {},\n⠤  =  {},\n⠥  =  {},\n⠦  =  {},\n⠧  =  {},\n⠨  =  {},\n⠩  =  {},\n⠪  =  {},\n⠫  =  {},\n⠬  =  {},\n⠭  =  {},\n⠮  =  {},\n⠯  =  {},\n⠰  =  {},\n⠱  =  {},\n⠲  =  {},\n⠳  =  {},\n⠴  =  {},\n⠵  =  {},\n⠶  =  {},\n⠷  =  {},\n⠸  =  {},\n⠹  =  {},\n⠺  =  {},\n⠻  =  {},\n⠼  =  {},\n⠽  =  {},\n⠾  =  {},\n⠿  =  {},\n⡀  =  {},\n⡁  =  {},\n⡂  =  {},\n⡃  =  {},\n⡄  =  {},\n⡅  =  {},\n⡆  =  {},\n⡇  =  {},\n⡈  =  {},\n⡉  =  {},\n⡊  =  {},\n⡋  =  {},\n⡌  =  {},\n⡍  =  {},\n⡎  =  {},\n⡏  =  {},\n⡐  =  {},\n⡑  =  {},\n⡒  =  {},\n⡓  =  {},\n⡕  =  {},\n⡔  =  {},\n⡗  =  {},\n⡖  =  {},\n⡘  =  {}"
+    
  
     def braille_to_lang(self , lang='english', text = '' ):
         try:
@@ -265,8 +176,10 @@ space  =  {},
             for item in the_str:
                 temp = item.split('=')
                 temp_dict[temp[0]] = temp[1]
-            temp_dict['⠀'] = temp_dict.pop('space')
+            print("\nn\n\n****    3     ***** \n\n\n")
+            temp_dict['⠀'] = temp_dict.pop('space' , ' ')
             self.langs[lang_name] = temp_dict
+            print(self.langs)
             return f'{lang_name} added successfully.' 
         except:
             return f'not success to add new language. try again.'
@@ -365,7 +278,7 @@ space  =  {t},
 '''
 
 
-d = translator() 
-d.braille_to_lang('persian' , '⠗⠁⠓⠏⠽⠗⠺⠵')
-d.lang_to_braille('persian' , 'سر و صدا ')
-d.add_lang('spanish' , term)
+# d = translator() 
+# d.braille_to_lang('persian' , '⠗⠁⠓⠏⠽⠗⠺⠵')
+# d.lang_to_braille('persian' , 'سر و صدا ')
+# d.add_lang('spanish' , term)
