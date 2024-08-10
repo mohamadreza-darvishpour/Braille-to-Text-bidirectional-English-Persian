@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, Qt, QMimeData, QUrl
 from translator import translator 
 from PyQt5.QtCore import Qt  , QPoint
 from PyPDF2 import PdfReader, PdfWriter
+import fitz 
 from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon 
 
 translate = translator()
@@ -163,16 +164,18 @@ class Window1(QWidget):
 
         # First language selection options
         self.language_combo1 = QComboBox()
-        self.language_combo1.addItems(["English", "French", "Spanish", "German"])
+        temp_lang_list  = list(translate.langs.keys())
+        temp_lang_list.insert(0 , 'BRAILLE')
+        self.language_combo1.addItems(temp_lang_list)
         layout.addWidget(self.language_combo1)
 
         # Second language selection options (newly added part)
         self.language_combo2 = QComboBox()
-        self.language_combo2.addItems(["English", "French", "Spanish", "German"])
+        self.language_combo2.addItems(temp_lang_list)
         layout.addWidget(self.language_combo2)
 
         # Dropping part label
-        self.drop_label = QLabel("PDF File ready for drag and drop")
+        self.drop_label = QLabel("Translated PDF File for drag and drop")
         self.drop_label.setStyleSheet(self.default_style())
         self.drop_label.setFixedHeight(50)
         self.drop_label.setAlignment(Qt.AlignCenter)
@@ -225,6 +228,11 @@ class Window1(QWidget):
         self.drop_label.setStyleSheet(self.default_style())
         self.language_combo1.setCurrentIndex(0)
 
+
+
+
+
+
     def capitalizePDF(self):
         if not self.pdf_file_path:
             QMessageBox.warning(self, "Missing Information", "Please ensure a PDF file is dragged.")
@@ -233,22 +241,39 @@ class Window1(QWidget):
         # Create a default save path in the current directory
         default_save_dir = os.path.join(os.getcwd(), "output_pdfs")
         os.makedirs(default_save_dir, exist_ok=True)
-        self.output_pdf_path = os.path.join(default_save_dir, f"CAPITALIZED_{os.path.basename(self.pdf_file_path)}")
+        self.output_pdf_path = os.path.join(default_save_dir, f"TRANSLATED_{os.path.basename(self.pdf_file_path)}")
 
-        # Read PDF and capitalize text
-        with open(self.pdf_file_path, "rb") as file:
-            reader = PdfReader(file)
-            writer = PdfWriter()
+        # Get selected languages
+        source_lang = self.language_combo1.currentText()
+        target_lang = self.language_combo2.currentText()
 
-            for i in range(len(reader.pages)):
-                page = reader.pages[i]
-                page_text = page.extract_text().upper()
-                writer.add_page(page)
+        # Open the original PDF and create a new PDF for output
+        original_pdf = fitz.open(self.pdf_file_path)
+        new_pdf = fitz.open()
 
-                with open(self.output_pdf_path, "wb") as output_file:
-                    writer.write(output_file)
+        for page_num in range(len(original_pdf)):
+            original_page = original_pdf.load_page(page_num)
+            original_text = original_page.get_text()
+            print('1 - ', original_text)
+
+            # Translate the text
+            translated_text = custom_translator(target_lang, original_text)
+
+            # Create a new page in the new PDF
+            new_page = new_pdf.new_page(width=original_page.rect.width, height=original_page.rect.height)
+
+            # Insert the translated text into the new page
+            new_page.insert_text((72, 72), f"Translated from {source_lang} to {target_lang}:\n\n{translated_text}",
+                                fontsize=12, fontname="helv", color=(0, 0, 0))
+            print('\n2 - ', new_page.get_text())
+
+        # Save the new PDF
+        new_pdf.save(self.output_pdf_path)
+        new_pdf.close()
+        original_pdf.close()
 
         self.enable_drag_and_drop()
+
 
     def enable_drag_and_drop(self):
         self.drop_label.setText(f"PDF ready: {os.path.basename(self.output_pdf_path)}")
