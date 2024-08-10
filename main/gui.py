@@ -2,9 +2,9 @@ import sys , os
 from PyQt5.QtWidgets import *  
 from PyQt5.QtCore import pyqtSignal, Qt, QMimeData, QUrl
 from translator import translator 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt  , QPoint
 from PyPDF2 import PdfReader, PdfWriter
-from PyQt5.QtGui import QDrag
+from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon 
 
 translate = translator()
 braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
@@ -140,6 +140,8 @@ class BrailleInputArea(QWidget):
 
 
 
+
+
 class Window1(QWidget):
     def __init__(self):
         super().__init__()
@@ -159,10 +161,15 @@ class Window1(QWidget):
 
         layout.addWidget(self.drag_label)
 
-        # Language selection options
-        self.language_combo = QComboBox()
-        self.language_combo.addItems(["English", "French", "Spanish", "German"])
-        layout.addWidget(self.language_combo)
+        # First language selection options
+        self.language_combo1 = QComboBox()
+        self.language_combo1.addItems(["English", "French", "Spanish", "German"])
+        layout.addWidget(self.language_combo1)
+
+        # Second language selection options (newly added part)
+        self.language_combo2 = QComboBox()
+        self.language_combo2.addItems(["English", "French", "Spanish", "German"])
+        layout.addWidget(self.language_combo2)
 
         # Dropping part label
         self.drop_label = QLabel("PDF File ready for drag and drop")
@@ -191,6 +198,7 @@ class Window1(QWidget):
         # Internal variables
         self.pdf_file_path = None
         self.output_pdf_path = None
+        self.drag_start_position = None
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -215,7 +223,7 @@ class Window1(QWidget):
         self.drag_label.setStyleSheet(self.default_style())
         self.drop_label.setText("PDF File ready for drag and drop")
         self.drop_label.setStyleSheet(self.default_style())
-        self.language_combo.setCurrentIndex(0)
+        self.language_combo1.setCurrentIndex(0)
 
     def capitalizePDF(self):
         if not self.pdf_file_path:
@@ -243,17 +251,42 @@ class Window1(QWidget):
         self.enable_drag_and_drop()
 
     def enable_drag_and_drop(self):
-        # Set up the drop label to allow drag-and-drop of the generated PDF
-        def drag_start(event):
-            mime_data = QMimeData()
-            mime_data.setUrls([QUrl.fromLocalFile(self.output_pdf_path)])
-            drag = QDrag(self)
-            drag.setMimeData(mime_data)
-            drag.exec_(Qt.CopyAction | Qt.MoveAction)
-
         self.drop_label.setText(f"PDF ready: {os.path.basename(self.output_pdf_path)}")
         self.drop_label.setStyleSheet(self.aqua_style())
-        self.drop_label.mouseMoveEvent = drag_start
+        self.drop_label.setAcceptDrops(False)
+
+        # Mouse press event to initiate dragging
+        def mousePressEvent(event):
+            if event.button() == Qt.LeftButton:
+                self.drag_start_position = event.pos()
+
+        # Mouse move event to start dragging
+        def mouseMoveEvent(event):
+            if event.buttons() & Qt.LeftButton:
+                if (event.pos() - self.drag_start_position).manhattanLength() < QApplication.startDragDistance():
+                    return
+
+                mime_data = QMimeData()
+                mime_data.setUrls([QUrl.fromLocalFile(self.output_pdf_path)])
+
+                drag = QDrag(self)
+                drag.setMimeData(mime_data)
+
+                # Create a pixmap to show while dragging
+                pixmap = QPixmap(100, 100)
+                pixmap.fill(Qt.transparent)
+                painter = QPainter(pixmap)
+                icon = QIcon(self.output_pdf_path)
+                icon.paint(painter, pixmap.rect())
+                painter.end()
+
+                drag.setPixmap(pixmap)
+                drag.setHotSpot(QPoint(pixmap.width() // 2, pixmap.height() // 2))
+
+                drag.exec_(Qt.CopyAction | Qt.MoveAction)
+
+        self.drop_label.mousePressEvent = mousePressEvent
+        self.drop_label.mouseMoveEvent = mouseMoveEvent
 
     def default_style(self):
         return """
@@ -278,7 +311,6 @@ class Window1(QWidget):
                 padding: 10px;
             }
         """
-
 
 
 
