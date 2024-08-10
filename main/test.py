@@ -1,159 +1,190 @@
-# import sys
-# from PyQt5.QtWidgets import *  # QApplication, QMainWindow, QStackedWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QTextEdit, QGridLayout
-# from PyQt5.QtCore import pyqtSignal
-# from translator import translator 
+from translator import translator
 
-# # Assume translate.braille_to_lang is your actual translation method
-# translate = translator()
 
-# def custom_translator(lang, braille_text):
-#     print('\n\n\n****', lang, '****')
-#     text = translate.braille_to_lang(lang, braille_text)
-#     return "Translated text for: " + text
+import sys, os
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSignal, Qt, QMimeData, QUrl
+from PyPDF2 import PdfReader, PdfWriter
+from PyQt5.QtGui import QDrag
 
-# braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
+# Translator instance
+translate = translator()
+braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
 
-# class BrailleTranslator(QWidget):
-#     def __init__(self, input_area):
-#         super().__init__()
-#         self.input_area = input_area
 
-#         self.language_input = QLineEdit()
-#         self.language_input.setPlaceholderText("Enter language for translation")
 
-#         self.translated_text = QLineEdit()
-#         self.translated_text.setReadOnly(True)
-#         self.copy_button = QPushButton("Copy")
-#         self.copy_button.clicked.connect(self.copy_to_clipboard)
-#         self.translate_button = QPushButton("Translate")
-#         self.translate_button.clicked.connect(self.translate_text)
 
-#         layout = QVBoxLayout()
-#         layout.addWidget(self.language_input)
-#         layout.addWidget(self.translated_text)
-#         layout.addWidget(self.copy_button)
-#         layout.addWidget(self.translate_button)
-#         self.setLayout(layout)
+class Window1(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PDF Drag and Drop")
 
-#     def set_translated_text(self, text):
-#         self.translated_text.setText(text)
+        # Main layout
+        layout = QVBoxLayout()
 
-#     def copy_to_clipboard(self):
-#         clipboard = QApplication.clipboard()
-#         clipboard.setText(self.translated_text.text())
+        # Dragging part label
+        self.drag_label = QLabel("Drag a PDF file here")
+        self.drag_label.setStyleSheet(self.default_style())
+        self.drag_label.setFixedHeight(100)
+        self.drag_label.setAlignment(Qt.AlignCenter)
+        self.drag_label.setAcceptDrops(True)
+        self.drag_label.dragEnterEvent = self.dragEnterEvent
+        self.drag_label.dropEvent = self.dropEvent
 
-#     def translate_text(self):
-#         # Get the text from the input area
-#         braille_text = self.input_area.get_text()
-#         language = self.language_input.text()  # Get the language from the QLineEdit
-#         translated_text = custom_translator(language, braille_text)
-#         self.set_translated_text(translated_text)
-#         print(f"Translating Braille: {braille_text} to {language} -> {translated_text}")
+        layout.addWidget(self.drag_label)
 
-# class BrailleKeyboard(QWidget):
-#     def __init__(self, input_area):
-#         super().__init__()
-#         self.input_area = input_area
+        # Language selection options
+        self.language_combo = QComboBox()
+        self.language_combo.addItems(["English", "French", "Spanish", "German"])
+        layout.addWidget(self.language_combo)
 
-#         layout = QGridLayout()
-#         positions = [(i, j) for i in range(10) for j in range(8)]
+        # Dropping part label
+        self.drop_label = QLabel("PDF File ready for drag and drop")
+        self.drop_label.setStyleSheet(self.default_style())
+        self.drop_label.setFixedHeight(50)
+        self.drop_label.setAlignment(Qt.AlignCenter)
+        self.drop_label.setAcceptDrops(False)
 
-#         for position, char in zip(positions, braille_chars):
-#             button = QPushButton(char)
-#             button.setFixedSize(30, 30)
-#             button.clicked.connect(lambda _, ch=char: self.insert_braille_char(ch))
-#             layout.addWidget(button, *position)
+        layout.addWidget(self.drop_label)
 
-#         self.setLayout(layout)
+        # Reset and Capitalize buttons
+        button_layout = QVBoxLayout()
 
-#     def insert_braille_char(self, char):
-#         self.input_area.input_text.insertPlainText(char)
-#         self.input_area.textChanged.emit()  # Emit textChanged signal
+        self.reset_button = QPushButton("Reset")
+        button_layout.addWidget(self.reset_button)
+        self.reset_button.clicked.connect(self.resetFields)
 
-# class BrailleInputArea(QWidget):
-#     textChanged = pyqtSignal()  # Custom signal to handle text change
+        self.capitalize_button = QPushButton("Capitalize")
+        button_layout.addWidget(self.capitalize_button)
+        self.capitalize_button.clicked.connect(self.capitalizePDF)
 
-#     def __init__(self):
-#         super().__init__()
+        layout.addLayout(button_layout)
 
-#         self.input_text = QTextEdit()
-#         self.input_text.setAcceptRichText(False)
+        self.setLayout(layout)
 
-#         layout = QVBoxLayout()
-#         layout.addWidget(self.input_text)
-#         self.setLayout(layout)
+        # Internal variables
+        self.pdf_file_path = None
+        self.output_pdf_path = None
 
-#     def get_text(self):
-#         return self.input_text.toPlainText()
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
 
-#     def set_text(self, text):
-#         self.input_text.setPlainText(text)
+    def dropEvent(self, event):
+        for url in event.mimeData().urls():
+            self.pdf_file_path = url.toLocalFile()
+            if self.pdf_file_path.lower().endswith(".pdf"):
+                self.drag_label.setText(f"Loaded PDF: {os.path.basename(self.pdf_file_path)}")
+                self.drag_label.setStyleSheet(self.aqua_style())
+            else:
+                QMessageBox.warning(self, "Invalid File", "Please drop a valid PDF file.")
+                self.pdf_file_path = None
+                self.drag_label.setText("Drag a PDF file here")
+                self.drag_label.setStyleSheet(self.default_style())
 
-# class Window1(QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         layout = QVBoxLayout()
-#         layout.addWidget(QLabel("This is Window 1"))
-#         self.setLayout(layout)
+    def resetFields(self):
+        self.pdf_file_path = None
+        self.output_pdf_path = None
+        self.drag_label.setText("Drag a PDF file here")
+        self.drag_label.setStyleSheet(self.default_style())
+        self.drop_label.setText("PDF File ready for drag and drop")
+        self.drop_label.setStyleSheet(self.default_style())
+        self.language_combo.setCurrentIndex(0)
 
-# class Window2(QWidget):
-#     '''braille to lang'''
-#     def __init__(self):
-#         super().__init__()
-#         layout = QVBoxLayout()
+    def capitalizePDF(self):
+        if not self.pdf_file_path:
+            QMessageBox.warning(self, "Missing Information", "Please ensure a PDF file is dragged.")
+            return
 
-#         self.input_area = BrailleInputArea()
-#         self.translator = BrailleTranslator(self.input_area)  # Pass the input area to the translator
-#         self.keyboard = BrailleKeyboard(self.input_area)
-#         layout.addWidget(self.translator)
-#         layout.addWidget(QLabel("Braille Keyboard"))
-#         layout.addWidget(self.keyboard)
-#         layout.addWidget(QLabel("Braille Input Area"))
-#         layout.addWidget(self.input_area)
+        # Create a default save path in the current directory
+        default_save_dir = os.path.join(os.getcwd(), "output_pdfs")
+        os.makedirs(default_save_dir, exist_ok=True)
+        self.output_pdf_path = os.path.join(default_save_dir, f"CAPITALIZED_{os.path.basename(self.pdf_file_path)}")
 
-#         self.setLayout(layout)
+        # Read PDF and capitalize text
+        with open(self.pdf_file_path, "rb") as file:
+            reader = PdfReader(file)
+            writer = PdfWriter()
 
-#         # Connect textChanged signal to update translation
-#         self.input_area.textChanged.connect(self.translator.translate_text)
+            for i in range(len(reader.pages)):
+                page = reader.pages[i]
+                page_text = page.extract_text().upper()
+                writer.add_page(page)
 
-# class Window3(QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         layout = QVBoxLayout()
-#         layout.addWidget(QLabel("This is Window 3"))
-#         self.setLayout(layout)
+                with open(self.output_pdf_path, "wb") as output_file:
+                    writer.write(output_file)
 
-# class MainWindow(QMainWindow):
-#     def __init__(self):
-#         super().__init__()
-#         self.setWindowTitle("PyQt5 Multiple Windows Example")
-#         self.setGeometry(100, 100, 600, 400)
+        self.enable_drag_and_drop()
 
-#         self.stacked_widget = QStackedWidget()
-#         self.setCentralWidget(self.stacked_widget)
+    def enable_drag_and_drop(self):
+        # Set up the drop label to allow drag-and-drop of the generated PDF
+        def drag_start(event):
+            mime_data = QMimeData()
+            mime_data.setUrls([QUrl.fromLocalFile(self.output_pdf_path)])
+            drag = QDrag(self)
+            drag.setMimeData(mime_data)
+            drag.exec_(Qt.CopyAction | Qt.MoveAction)
 
-#         self.window1 = Window1()
-#         self.window2 = Window2()
-#         self.window3 = Window3()
+        self.drop_label.setText(f"PDF ready: {os.path.basename(self.output_pdf_path)}")
+        self.drop_label.setStyleSheet(self.aqua_style())
+        self.drop_label.mouseMoveEvent = drag_start
 
-#         self.stacked_widget.addWidget(self.window1)
-#         self.stacked_widget.addWidget(self.window2)
-#         self.stacked_widget.addWidget(self.window3)
+    def default_style(self):
+        return """
+            QLabel {
+                border: 2px dashed #aaa;
+                background-color: #f9f9f9;
+                color: #333;
+                font-size: 16px;
+                border-radius: 10px;
+                padding: 10px;
+            }
+        """
 
-#         self.create_taskbar()
+    def aqua_style(self):
+        return """
+            QLabel {
+                border: 2px dashed aqua;
+                background-color: #e0ffff;
+                color: #007777;
+                font-size: 16px;
+                border-radius: 10px;
+                padding: 10px;
+            }
+        """
 
-#     def create_taskbar(self):
-#         self.taskbar = self.menuBar().addMenu("Windows")
-#         self.add_taskbar_action("Window 1", 0)
-#         self.add_taskbar_action("Window 2", 1)
-#         self.add_taskbar_action("Window 3", 2)
 
-#     def add_taskbar_action(self, name, index):
-#         action = self.taskbar.addAction(name)
-#         action.triggered.connect(lambda: self.stacked_widget.setCurrentIndex(index))
 
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     main_window = MainWindow()
-#     main_window.show()
-#     sys.exit(app.exec_())
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PyQt5 Multiple Windows Example")
+        self.setGeometry(100, 100, 600, 400)
+
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
+
+        self.window1 = Window1()
+
+        self.stacked_widget.addWidget(self.window1)
+
+        self.create_taskbar()
+
+    def create_taskbar(self):
+        self.taskbar = self.menuBar().addMenu("Windows")
+        self.add_taskbar_action("Window 1", 0)
+
+    def add_taskbar_action(self, name, index):
+        action = self.taskbar.addAction(name)
+        action.triggered.connect(lambda: self.stacked_widget.setCurrentIndex(index))
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    main_window = MainWindow()
+    main_window.show()
+    sys.exit(app.exec_())
+
+
+
+
