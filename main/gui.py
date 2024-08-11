@@ -502,6 +502,9 @@ class Window4(QWidget):
 
     def send_text(self):
         method_name = self.method_name_input.text()
+        if (' ' in  method_name) or method_name=='' :
+            QMessageBox.warning(self, "Wrong Language name", "Please ensure entered language name is correct.")
+            return
         self.new_lang_name = method_name
         text = self.text_input.toPlainText()
         self.add_text(self.new_lang_name, text)
@@ -511,6 +514,7 @@ class Window4(QWidget):
     def add_text(self ,  method_name , text):
         # Custom function to handle the method name and text
         # print(f'\n\n3223   methodname ={method_name} , text = {text} 3223\n\n')
+
         self.alarm = translate.add_lang(method_name , text)
         self.show_popup()
 
@@ -524,6 +528,7 @@ class Window4(QWidget):
     def option_changed(self, index):
         option_text = self.option_custom_func(self.option_combo.itemText(index))
         self.text_input.setText(option_text)
+        self.method_name_input.setText(self.option_combo.itemText(index))
 
     def option_custom_func(self, option_index):
         # Custom function to return a text based on the option
@@ -539,7 +544,12 @@ class Window4(QWidget):
         return option_texts.get(option_index, self.default_text)
 
     def update_options(self, new_item):
-        self.option_combo.addItem(new_item)
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.option_combo.removeItem(any)
+        self.option_combo.addItems(lang_list)
 
 
 

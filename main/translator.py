@@ -175,12 +175,16 @@ class translator():
             the_str = the_str.replace('}' , '') 
             the_str = the_str.replace('{' , '') 
             the_str = the_str.split(',') 
+            print('\n\n\n\nnewwone \n\n\n\n')
             temp_dict = {}
             for item in the_str:
                 temp = item.split('=')
-                temp_dict[temp[0]] = temp[1]
-            # print("\nn\n\n****    3     ***** \n\n\n")
+                if(len(temp)>1 and temp[0]!= '' ):
+                    print('_' , temp)
+                    temp_dict[temp[0]] = temp[1]
+            print(temp_dict.keys())
             temp_dict['⠀'] = temp_dict.pop('space' , ' ')
+            print("\nn\n\n****    3     ***** \n\n\n")
             self.langs[lang_name] = temp_dict
             # print(self.langs)
             return f'{lang_name} added successfully.' 
