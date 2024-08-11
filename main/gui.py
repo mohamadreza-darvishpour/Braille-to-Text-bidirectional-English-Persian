@@ -15,12 +15,12 @@ braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
 
 def custom_translator(lang, braille_text):
     text = translate.braille_to_lang(lang, braille_text)
-    return "Translated text for: " + text
+    return text
 
 
 def to_braille_custom_translator(lang, common_text):
     text = translate.lang_to_braille(lang, common_text)
-    return "Translated text for: " + text
+    return  text
 
 
 
@@ -32,18 +32,23 @@ class toBrailleTranslator(QWidget):
         super().__init__()
         self.input_area = input_area
 
-        self.language_input = QLineEdit()
-        self.language_input.setPlaceholderText("Enter language for translation")
+        # language selection options
+        self.language_box = QComboBox()
+        temp_lang_list  = list(translate.langs.keys())
+        temp_lang_list.insert(0 , 'Languages')
+        self.language_box.addItems(temp_lang_list)
 
         self.translated_text = QLineEdit()
         self.translated_text.setReadOnly(True)
-        self.copy_button = QPushButton("Copy")
+        self.copy_button = QPushButton("Copy Translated Text")
         self.copy_button.clicked.connect(self.copy_to_clipboard)
-        self.translate_button = QPushButton("Translate")
+        self.translate_button = QPushButton("Translate To Braille")
         self.translate_button.clicked.connect(self.translate_text)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Choose Language Which Tranlate To Braille  :"))
+        layout.addWidget(self.language_box)
+        layout.addWidget(QLabel("Translated Text :"))
         layout.addWidget(self.translated_text)
         layout.addWidget(self.copy_button)
         layout.addWidget(self.translate_button)
@@ -59,7 +64,10 @@ class toBrailleTranslator(QWidget):
     def translate_text(self):
         # Get the text from the input area
         braille_text = self.input_area.get_text()
-        language = self.language_input.text()  # Get the language from the QLineEdit
+        language = self.language_box.currentText()  # Get the language from the QLineEdit
+        if language=='Languages' : 
+            QMessageBox.warning(self, "Invalid Language", "Choose Correct Language.")
+
         translated_text = to_braille_custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
 
@@ -69,18 +77,30 @@ class BrailleTranslator(QWidget):
         super().__init__()
         self.input_area = input_area
 
-        self.language_input = QLineEdit()
-        self.language_input.setPlaceholderText("Enter language for translation")
+        # self.language_input = QLineEdit()
+        # self.language_input.setPlaceholderText("Enter language for translation")
+
+
+        # language selection options
+        self.language_box = QComboBox()
+        temp_lang_list  = list(translate.langs.keys())
+        temp_lang_list.insert(0 , 'Languages')
+        self.language_box.addItems(temp_lang_list)
+
+
 
         self.translated_text = QLineEdit()
         self.translated_text.setReadOnly(True)
-        self.copy_button = QPushButton("Copy")
+        self.copy_button = QPushButton("Copy Translated Text")
         self.copy_button.clicked.connect(self.copy_to_clipboard)
         self.translate_button = QPushButton("Translate")
         self.translate_button.clicked.connect(self.translate_text)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Choose Language :"))
+        layout.addWidget(self.language_box)
+        # layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Translated Text :"))
         layout.addWidget(self.translated_text)
         layout.addWidget(self.copy_button)
         layout.addWidget(self.translate_button)
@@ -96,7 +116,11 @@ class BrailleTranslator(QWidget):
     def translate_text(self):
         # Get the text from the input area
         braille_text = self.input_area.get_text()
-        language = self.language_input.text()  # Get the language from the QLineEdit
+        language = self.language_box.currentText()  # Get the language from the QLineEdit
+        if language=='Languages' : 
+            QMessageBox.warning(self, "Invalid Language", "Please choose correct language.")
+
+            
         translated_text = custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
 
@@ -407,7 +431,7 @@ class Window3(QWidget):
         layout.addWidget(self.translator)
         # layout.addWidget(QLabel("Braille Keyboard"))
         # layout.addWidget(self.keyboard)
-        layout.addWidget(QLabel("Braille Input Area"))
+        layout.addWidget(QLabel("Text Input Area"))
         layout.addWidget(self.input_area)
 
         self.setLayout(layout)
