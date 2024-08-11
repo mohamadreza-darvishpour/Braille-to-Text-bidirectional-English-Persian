@@ -154,9 +154,12 @@ class translator():
 
     def lang_to_braille(self , lang='english' , text='' ):
         try:
+            print(f'\nlangintrans: -{lang}-')
             dict = self.langs[lang]
         except:
+            print('\nself.langs\n')
             dict = self.langs['english']
+            print('n\n\n2\n', dict)
             string = 'could not find language chars...' 
             return string
         string  = '' 

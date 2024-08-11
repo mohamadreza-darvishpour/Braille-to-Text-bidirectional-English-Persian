@@ -5,6 +5,9 @@ from translator import translator
 from PyQt5.QtCore import Qt  , QPoint
 from PyPDF2 import PdfReader, PdfWriter
 import fitz 
+import pymupdf 
+
+from fitz import Font
 from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon 
 
 translate = translator()
@@ -15,8 +18,8 @@ def custom_translator(lang, braille_text):
     return "Translated text for: " + text
 
 
-def to_braille_custom_translator(lang, braille_text):
-    text = translate.lang_to_braille(lang, braille_text)
+def to_braille_custom_translator(lang, common_text):
+    text = translate.lang_to_braille(lang, common_text)
     return "Translated text for: " + text
 
 
@@ -146,13 +149,13 @@ class BrailleInputArea(QWidget):
 class Window1(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PDF Drag and Drop")
+        self.setWindowTitle("PDF Translation part")
 
         # Main layout
         layout = QVBoxLayout()
 
         # Dragging part label
-        self.drag_label = QLabel("Drag a PDF file here")
+        self.drag_label = QLabel("Drag a PDF file here to translate")
         self.drag_label.setStyleSheet(self.default_style())
         self.drag_label.setFixedHeight(100)
         self.drag_label.setAlignment(Qt.AlignCenter)
@@ -169,13 +172,18 @@ class Window1(QWidget):
         self.language_combo1.addItems(temp_lang_list)
         layout.addWidget(self.language_combo1)
 
+
+        layout.addWidget(QLabel("To"))
+
+
+
         # Second language selection options (newly added part)
         self.language_combo2 = QComboBox()
         self.language_combo2.addItems(temp_lang_list)
         layout.addWidget(self.language_combo2)
 
         # Dropping part label
-        self.drop_label = QLabel("Translated PDF File for drag and drop")
+        self.drop_label = QLabel("drag and drop Translated PDF File where you want. ")
         self.drop_label.setStyleSheet(self.default_style())
         self.drop_label.setFixedHeight(50)
         self.drop_label.setAlignment(Qt.AlignCenter)
@@ -183,16 +191,16 @@ class Window1(QWidget):
 
         layout.addWidget(self.drop_label)
 
-        # Reset and Capitalize buttons
+        # Reset and Translate buttons
         button_layout = QVBoxLayout()
 
         self.reset_button = QPushButton("Reset")
         button_layout.addWidget(self.reset_button)
         self.reset_button.clicked.connect(self.resetFields)
 
-        self.capitalize_button = QPushButton("Capitalize")
-        button_layout.addWidget(self.capitalize_button)
-        self.capitalize_button.clicked.connect(self.capitalizePDF)
+        self.translate_button = QPushButton("Translate")
+        button_layout.addWidget(self.translate_button)
+        self.translate_button.clicked.connect(self.translatePDF)
 
         layout.addLayout(button_layout)
 
@@ -222,9 +230,9 @@ class Window1(QWidget):
     def resetFields(self):
         self.pdf_file_path = None
         self.output_pdf_path = None
-        self.drag_label.setText("Drag a PDF file here")
+        self.drag_label.setText("Drag a PDF file here to translate")
         self.drag_label.setStyleSheet(self.default_style())
-        self.drop_label.setText("PDF File ready for drag and drop")
+        self.drop_label.setText("drag and drop Translated PDF File where you want. ")
         self.drop_label.setStyleSheet(self.default_style())
         self.language_combo1.setCurrentIndex(0)
 
@@ -233,7 +241,7 @@ class Window1(QWidget):
 
 
 
-    def capitalizePDF(self):
+    def translatePDF(self):
         if not self.pdf_file_path:
             QMessageBox.warning(self, "Missing Information", "Please ensure a PDF file is dragged.")
             return
@@ -250,26 +258,53 @@ class Window1(QWidget):
         # Open the original PDF and create a new PDF for output
         original_pdf = fitz.open(self.pdf_file_path)
         new_pdf = fitz.open()
+        doc = pymupdf.Document()
 
         for page_num in range(len(original_pdf)):
             original_page = original_pdf.load_page(page_num)
             original_text = original_page.get_text()
-            print('1 - ', original_text)
 
             # Translate the text
-            translated_text = custom_translator(target_lang, original_text)
+            print(f'\noriginaltext : {original_text}  \ntragetlang : {target_lang}\nsrclang: {source_lang}\n')
+            if(source_lang == 'BRAILLE' and target_lang!='BRAILLE'):
+                translated_text = custom_translator(target_lang, original_text)
+                font_name = "helv"
+
+            elif( source_lang != 'BRAILLE' and target_lang=='BRAILLE' ):
+                translated_text = to_braille_custom_translator(source_lang, original_text)
+                print(f'\ntranslated: {translated_text}\n')
+            else:            
+                QMessageBox.warning(self, "Wrong Languages", "Please ensure chosen languages is correct.")
+                return
+
+
 
             # Create a new page in the new PDF
-            new_page = new_pdf.new_page(width=original_page.rect.width, height=original_page.rect.height)
+            # new_page = new_pdf.new_page(width=original_page.rect.width, height=original_page.rect.height)
+            page = doc.new_page(width=150, height=150)  # make small page
+
+            arch = pymupdf.Archive(".")
+            css = """@font-face {font-family: BRAILLE; src: url(BRAILLE.ttf);}"""
+            if(target_lang == 'BRAILLE'):
+                # font_name = Font(fontfile='./BRAILLE.ttf')
+                # braille_font = new_page.insert_font(fontfile='./BRAILLE.ttf')
+                # font_name = braille_font
+                # print('\n\n****' ,font_name ,type( font_name))
+                pass
+
 
             # Insert the translated text into the new page
-            new_page.insert_text((72, 72), f"Translated from {source_lang} to {target_lang}:\n\n{translated_text}",
-                                fontsize=12, fontname="helv", color=(0, 0, 0))
-            print('\n2 - ', new_page.get_text())
+            # new_page.insert_text((72, 72), f'{translated_text}', fontname = str(font_name),
+            #                     fontsize=12,color=(0, 0, 0))
+            
+            page.insert_htmlbox(page.rect, translated_text, css=css, archive=arch)
 
+        doc.subset_fonts(verbose=True)  # build subset fonts to reduce file size
         # Save the new PDF
-        new_pdf.save(self.output_pdf_path)
-        new_pdf.close()
+        # new_pdf.save(self.output_pdf_path)
+        # new_pdf.close()
+        doc.save(self.output_pdf_path)
+        doc.ez_save(__file__.replace(".py", ".pdf"))
         original_pdf.close()
 
         self.enable_drag_and_drop()
