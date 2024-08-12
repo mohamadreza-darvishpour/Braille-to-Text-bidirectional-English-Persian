@@ -72,6 +72,8 @@ class toBrailleTranslator(QWidget):
         self.set_translated_text(translated_text)
 
 
+
+
 class BrailleTranslator(QWidget):
     def __init__(self, input_area):
         super().__init__()
@@ -123,6 +125,8 @@ class BrailleTranslator(QWidget):
             
         translated_text = custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
+
+
 
 class BrailleKeyboard(QWidget):
     def __init__(self, input_area):
@@ -260,7 +264,16 @@ class Window1(QWidget):
         self.drop_label.setStyleSheet(self.default_style())
         self.language_combo1.setCurrentIndex(0)
 
-
+    def update_window(self):
+        print('\n\n\n\n*******************8\n\n\n')
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.language_combo1.removeItem(any)
+            self.language_combo2.removeItem(any)
+        self.language_combo1.addItems(lang_list)
+        self.language_combo2.addItems(lang_list)
 
 
 
@@ -289,14 +302,12 @@ class Window1(QWidget):
             original_text = original_page.get_text()
 
             # Translate the text
-            print(f'\noriginaltext : {original_text}  \ntragetlang : {target_lang}\nsrclang: {source_lang}\n')
             if(source_lang == 'BRAILLE' and target_lang!='BRAILLE'):
                 translated_text = custom_translator(target_lang, original_text)
                 font_name = "helv"
 
             elif( source_lang != 'BRAILLE' and target_lang=='BRAILLE' ):
                 translated_text = to_braille_custom_translator(source_lang, original_text)
-                print(f'\ntranslated: {translated_text}\n')
             else:            
                 QMessageBox.warning(self, "Wrong Languages", "Please ensure chosen languages is correct.")
                 return
@@ -313,7 +324,6 @@ class Window1(QWidget):
                 # font_name = Font(fontfile='./BRAILLE.ttf')
                 # braille_font = new_page.insert_font(fontfile='./BRAILLE.ttf')
                 # font_name = braille_font
-                # print('\n\n****' ,font_name ,type( font_name))
                 pass
 
 
@@ -419,6 +429,16 @@ class Window2(QWidget):
         # Connect textChanged signal to update translation
         self.input_area.textChanged.connect(self.translator.translate_text)
 
+
+    def update_window(self):
+        print('\n\n\n\n*******************8\n\n\n')
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.translator.language_box.removeItem(any)
+        self.translator.language_box.addItems(lang_list)
+
 class Window3(QWidget):
     '''lang to braille'''
     def __init__(self):
@@ -431,7 +451,7 @@ class Window3(QWidget):
         layout.addWidget(self.translator)
         # layout.addWidget(QLabel("Braille Keyboard"))
         # layout.addWidget(self.keyboard)
-        layout.addWidget(QLabel("Text Input Area"))
+        layout.addWidget(QLabel("Common Text Input Area"))
         layout.addWidget(self.input_area)
 
         self.setLayout(layout)
@@ -440,6 +460,14 @@ class Window3(QWidget):
         self.input_area.textChanged.connect(self.translator.translate_text)
 
 
+    def update_window(self):
+        print('\n\n\n\n*******************8\n\n\n')
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.translator.language_box.removeItem(any)
+        self.translator.language_box.addItems(lang_list)
 
 
 class Window4(QWidget):
@@ -453,7 +481,10 @@ class Window4(QWidget):
         layout = QVBoxLayout()
 
         # Label
-        layout.addWidget(QLabel("This is Window 4"))
+        layout.addWidget(QLabel("""Here you can add or edit language characters.\n
+                                if you choose existant language you can edit 
+                                character just by changing character in bracets.
+                                \nlike:    ⠹  =  {your-character} """))
 
         # Input field for method name
         self.method_name_input = QLineEdit()
@@ -513,7 +544,6 @@ class Window4(QWidget):
 
     def add_text(self ,  method_name , text):
         # Custom function to handle the method name and text
-        # print(f'\n\n3223   methodname ={method_name} , text = {text} 3223\n\n')
 
         self.alarm = translate.add_lang(method_name , text)
         self.show_popup()
@@ -584,6 +614,15 @@ class MainWindow(QMainWindow):
     def add_taskbar_action(self, name, index):
         action = self.taskbar.addAction(name)
         action.triggered.connect(lambda: self.stacked_widget.setCurrentIndex(index))
+        action.triggered.connect(lambda: self.switch_window(index))
+
+
+    def switch_window(self, index):
+        self.stacked_widget.setCurrentIndex(index)
+        current_widget = self.stacked_widget.currentWidget()
+        print('******************\\n\n\n\n 9    *****************')
+        if hasattr(current_widget, 'update_window'):
+            current_widget.update_window()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
