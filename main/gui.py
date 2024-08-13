@@ -1,15 +1,16 @@
-import sys , os 
-from PyQt5.QtWidgets import *  
+import sys , os
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, Qt, QMimeData, QUrl
-from translator import translator 
+from translator import translator
 from PyQt5.QtCore import Qt  , QPoint
-from PyQt5.QtGui import QFont
-from PyPDF2 import PdfReader, PdfWriter
-import fitz 
-import pymupdf 
+import fitz
+import pymupdf
 
 from fitz import Font
-from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon 
+from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon
+
+
+
 
 translate = translator()
 braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
@@ -272,7 +273,6 @@ class Window1(QWidget):
         self.language_combo1.setCurrentIndex(0)
 
     def update_window(self):
-        print('\n\n\n\n*******************8\n\n\n')
         # self.option_combo.addItem(new_item)
         lang_list = list(translate.langs.keys())
         lang_list.insert(0 , 'BRAILLE')
@@ -301,7 +301,6 @@ class Window1(QWidget):
 
         # Open the original PDF and create a new PDF for output
         original_pdf = fitz.open(self.pdf_file_path)
-        new_pdf = fitz.open()
         doc = pymupdf.Document()
 
         for page_num in range(len(original_pdf)):
@@ -311,7 +310,6 @@ class Window1(QWidget):
             # Translate the text
             if(source_lang == 'BRAILLE' and target_lang!='BRAILLE'):
                 translated_text = custom_translator(target_lang, original_text)
-                font_name = "helv"
 
             elif( source_lang != 'BRAILLE' and target_lang=='BRAILLE' ):
                 translated_text = to_braille_custom_translator(source_lang, original_text)
@@ -321,29 +319,14 @@ class Window1(QWidget):
 
 
 
-            # Create a new page in the new PDF
-            # new_page = new_pdf.new_page(width=original_page.rect.width, height=original_page.rect.height)
-            page = doc.new_page(width=150, height=150)  # make small page
+            # Create a new page in the new doc
+            page = doc.new_page(width=595, height=842)  # A4 page size
 
             arch = pymupdf.Archive(".")
-            css = """@font-face {font-family: BRAILLE; src: url(BRAILLE.ttf);}"""
             if(target_lang == 'BRAILLE'):
-                # font_name = Font(fontfile='./BRAILLE.ttf')
-                # braille_font = new_page.insert_font(fontfile='./BRAILLE.ttf')
-                # font_name = braille_font
                 pass
+            page.insert_htmlbox(page.rect, translated_text, archive=arch)
 
-
-            # Insert the translated text into the new page
-            # new_page.insert_text((72, 72), f'{translated_text}', fontname = str(font_name),
-            #                     fontsize=12,color=(0, 0, 0))
-            
-            page.insert_htmlbox(page.rect, translated_text, css=css, archive=arch)
-
-        doc.subset_fonts(verbose=True)  # build subset fonts to reduce file size
-        # Save the new PDF
-        # new_pdf.save(self.output_pdf_path)
-        # new_pdf.close()
         doc.save(self.output_pdf_path)
         doc.ez_save(__file__.replace(".py", ".pdf"))
         original_pdf.close()
@@ -446,7 +429,6 @@ class Window2(QWidget):
 
 
     def update_window(self):
-        print('\n\n\n\n*******************8\n\n\n')
         # self.option_combo.addItem(new_item)
         lang_list = list(translate.langs.keys())
         lang_list.insert(0 , 'languages')
@@ -483,7 +465,6 @@ class Window3(QWidget):
 
 
     def update_window(self):
-        print('\n\n\n\n*******************8\n\n\n')
         # self.option_combo.addItem(new_item)
         lang_list = list(translate.langs.keys())
         lang_list.insert(0 , 'languages')
@@ -659,7 +640,6 @@ class MainWindow(QMainWindow):
     def switch_window(self, index):
         self.stacked_widget.setCurrentIndex(index)
         current_widget = self.stacked_widget.currentWidget()
-        print('******************\\n\n\n\n 9    *****************')
         if hasattr(current_widget, 'update_window'):
             current_widget.update_window()
 

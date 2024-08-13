@@ -1,23 +1,28 @@
-import sys , os 
-from PyQt5.QtWidgets import *  
+import sys , os
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, Qt, QMimeData, QUrl
-from translator import translator 
+from translator import translator
 from PyQt5.QtCore import Qt  , QPoint
-from PyPDF2 import PdfReader, PdfWriter
-import fitz 
-from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon 
+import fitz
+import pymupdf
+
+from fitz import Font
+from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon
+
+
+
 
 translate = translator()
 braille_chars = [chr(code) for code in range(0x2800, 0x28FF + 1)]
 
 def custom_translator(lang, braille_text):
     text = translate.braille_to_lang(lang, braille_text)
-    return "Translated text for: " + text
+    return text
 
 
-def to_braille_custom_translator(lang, braille_text):
-    text = translate.lang_to_braille(lang, braille_text)
-    return "Translated text for: " + text
+def to_braille_custom_translator(lang, common_text):
+    text = translate.lang_to_braille(lang, common_text)
+    return  text
 
 
 
@@ -29,18 +34,23 @@ class toBrailleTranslator(QWidget):
         super().__init__()
         self.input_area = input_area
 
-        self.language_input = QLineEdit()
-        self.language_input.setPlaceholderText("Enter language for translation")
+        # language selection options
+        self.language_box = QComboBox()
+        temp_lang_list  = list(translate.langs.keys())
+        temp_lang_list.insert(0 , 'Languages')
+        self.language_box.addItems(temp_lang_list)
 
         self.translated_text = QLineEdit()
         self.translated_text.setReadOnly(True)
-        self.copy_button = QPushButton("Copy")
+        self.copy_button = QPushButton("Copy Translated Text")
         self.copy_button.clicked.connect(self.copy_to_clipboard)
-        self.translate_button = QPushButton("Translate")
+        self.translate_button = QPushButton("Translate To Braille")
         self.translate_button.clicked.connect(self.translate_text)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Choose Language Which Tranlate To Braille  :"))
+        layout.addWidget(self.language_box)
+        layout.addWidget(QLabel("Translated Text :"))
         layout.addWidget(self.translated_text)
         layout.addWidget(self.copy_button)
         layout.addWidget(self.translate_button)
@@ -56,9 +66,14 @@ class toBrailleTranslator(QWidget):
     def translate_text(self):
         # Get the text from the input area
         braille_text = self.input_area.get_text()
-        language = self.language_input.text()  # Get the language from the QLineEdit
+        language = self.language_box.currentText()  # Get the language from the QLineEdit
+        if language=='Languages' : 
+            QMessageBox.warning(self, "Invalid Language", "Choose Correct Language.")
+
         translated_text = to_braille_custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
+
+
 
 
 class BrailleTranslator(QWidget):
@@ -66,18 +81,30 @@ class BrailleTranslator(QWidget):
         super().__init__()
         self.input_area = input_area
 
-        self.language_input = QLineEdit()
-        self.language_input.setPlaceholderText("Enter language for translation")
+        # self.language_input = QLineEdit()
+        # self.language_input.setPlaceholderText("Enter language for translation")
+
+
+        # language selection options
+        self.language_box = QComboBox()
+        temp_lang_list  = list(translate.langs.keys())
+        temp_lang_list.insert(0 , 'Languages')
+        self.language_box.addItems(temp_lang_list)
+
+
 
         self.translated_text = QLineEdit()
         self.translated_text.setReadOnly(True)
-        self.copy_button = QPushButton("Copy")
+        self.copy_button = QPushButton("Copy Translated Text")
         self.copy_button.clicked.connect(self.copy_to_clipboard)
         self.translate_button = QPushButton("Translate")
         self.translate_button.clicked.connect(self.translate_text)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Choose Language :"))
+        layout.addWidget(self.language_box)
+        # layout.addWidget(self.language_input)
+        layout.addWidget(QLabel("Translated Text :"))
         layout.addWidget(self.translated_text)
         layout.addWidget(self.copy_button)
         layout.addWidget(self.translate_button)
@@ -93,9 +120,15 @@ class BrailleTranslator(QWidget):
     def translate_text(self):
         # Get the text from the input area
         braille_text = self.input_area.get_text()
-        language = self.language_input.text()  # Get the language from the QLineEdit
+        language = self.language_box.currentText()  # Get the language from the QLineEdit
+        if language=='Languages' : 
+            QMessageBox.warning(self, "Invalid Language", "Please choose correct language.")
+
+            
         translated_text = custom_translator(language, braille_text)
         self.set_translated_text(translated_text)
+
+
 
 class BrailleKeyboard(QWidget):
     def __init__(self, input_area):
@@ -146,13 +179,20 @@ class BrailleInputArea(QWidget):
 class Window1(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PDF Drag and Drop")
+        self.setWindowTitle("PDF Translation part")
 
         # Main layout
         layout = QVBoxLayout()
+        # Label
+        label = QLabel("pdf to pdf translator")
+        label.setStyleSheet("""
+            font-size: 16px;
+            font-weight: bold;      """)
+        
+        layout.addWidget(label, alignment=Qt.AlignTop | Qt.AlignLeft)
 
         # Dragging part label
-        self.drag_label = QLabel("Drag a PDF file here")
+        self.drag_label = QLabel("Drag a PDF file here to translate")
         self.drag_label.setStyleSheet(self.default_style())
         self.drag_label.setFixedHeight(100)
         self.drag_label.setAlignment(Qt.AlignCenter)
@@ -169,13 +209,17 @@ class Window1(QWidget):
         self.language_combo1.addItems(temp_lang_list)
         layout.addWidget(self.language_combo1)
 
+
+        layout.addWidget(QLabel("To"))
+
+
         # Second language selection options (newly added part)
         self.language_combo2 = QComboBox()
         self.language_combo2.addItems(temp_lang_list)
         layout.addWidget(self.language_combo2)
 
         # Dropping part label
-        self.drop_label = QLabel("Translated PDF File for drag and drop")
+        self.drop_label = QLabel("drag and drop Translated PDF File where you want. ")
         self.drop_label.setStyleSheet(self.default_style())
         self.drop_label.setFixedHeight(50)
         self.drop_label.setAlignment(Qt.AlignCenter)
@@ -183,16 +227,16 @@ class Window1(QWidget):
 
         layout.addWidget(self.drop_label)
 
-        # Reset and Capitalize buttons
+        # Reset and Translate buttons
         button_layout = QVBoxLayout()
 
         self.reset_button = QPushButton("Reset")
         button_layout.addWidget(self.reset_button)
         self.reset_button.clicked.connect(self.resetFields)
 
-        self.capitalize_button = QPushButton("Capitalize")
-        button_layout.addWidget(self.capitalize_button)
-        self.capitalize_button.clicked.connect(self.capitalizePDF)
+        self.translate_button = QPushButton("Translate")
+        button_layout.addWidget(self.translate_button)
+        self.translate_button.clicked.connect(self.translatePDF)
 
         layout.addLayout(button_layout)
 
@@ -222,18 +266,26 @@ class Window1(QWidget):
     def resetFields(self):
         self.pdf_file_path = None
         self.output_pdf_path = None
-        self.drag_label.setText("Drag a PDF file here")
+        self.drag_label.setText("Drag a PDF file here to translate")
         self.drag_label.setStyleSheet(self.default_style())
-        self.drop_label.setText("PDF File ready for drag and drop")
+        self.drop_label.setText("drag and drop Translated PDF File where you want. ")
         self.drop_label.setStyleSheet(self.default_style())
         self.language_combo1.setCurrentIndex(0)
 
+    def update_window(self):
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'BRAILLE')
+        for any in range(len(lang_list) , -1 , -1):
+            self.language_combo1.removeItem(any)
+            self.language_combo2.removeItem(any)
+        self.language_combo1.addItems(lang_list)
+        self.language_combo2.addItems(lang_list)
 
 
 
 
-
-    def capitalizePDF(self):
+    def translatePDF(self):
         if not self.pdf_file_path:
             QMessageBox.warning(self, "Missing Information", "Please ensure a PDF file is dragged.")
             return
@@ -249,27 +301,34 @@ class Window1(QWidget):
 
         # Open the original PDF and create a new PDF for output
         original_pdf = fitz.open(self.pdf_file_path)
-        new_pdf = fitz.open()
+        doc = pymupdf.Document()
 
         for page_num in range(len(original_pdf)):
             original_page = original_pdf.load_page(page_num)
             original_text = original_page.get_text()
-            print('1 - ', original_text)
 
             # Translate the text
-            translated_text = custom_translator(target_lang, original_text)
+            if(source_lang == 'BRAILLE' and target_lang!='BRAILLE'):
+                translated_text = custom_translator(target_lang, original_text)
 
-            # Create a new page in the new PDF
-            new_page = new_pdf.new_page(width=original_page.rect.width, height=original_page.rect.height)
+            elif( source_lang != 'BRAILLE' and target_lang=='BRAILLE' ):
+                translated_text = to_braille_custom_translator(source_lang, original_text)
+            else:            
+                QMessageBox.warning(self, "Wrong Languages", "Please ensure chosen languages is correct.")
+                return
 
-            # Insert the translated text into the new page
-            new_page.insert_text((72, 72), f"Translated from {source_lang} to {target_lang}:\n\n{translated_text}",
-                                fontsize=12, fontname="helv", color=(0, 0, 0))
-            print('\n2 - ', new_page.get_text())
 
-        # Save the new PDF
-        new_pdf.save(self.output_pdf_path)
-        new_pdf.close()
+
+            # Create a new page in the new doc
+            page = doc.new_page(width=595, height=842)  # A4 page size
+
+            arch = pymupdf.Archive(".")
+            if(target_lang == 'BRAILLE'):
+                pass
+            page.insert_htmlbox(page.rect, translated_text, archive=arch)
+
+        doc.save(self.output_pdf_path)
+        doc.ez_save(__file__.replace(".py", ".pdf"))
         original_pdf.close()
 
         self.enable_drag_and_drop()
@@ -349,6 +408,14 @@ class Window2(QWidget):
         self.input_area = BrailleInputArea()
         self.translator = BrailleTranslator(self.input_area)  # Pass the input area to the translator
         self.keyboard = BrailleKeyboard(self.input_area)
+        
+        
+                # Label
+        label = QLabel("real-time Braille input to common language")
+        label.setStyleSheet("""
+            font-size: 16px;
+            font-weight: bold;      """)
+        layout.addWidget(label)
         layout.addWidget(self.translator)
         layout.addWidget(QLabel("Braille Keyboard"))
         layout.addWidget(self.keyboard)
@@ -360,19 +427,35 @@ class Window2(QWidget):
         # Connect textChanged signal to update translation
         self.input_area.textChanged.connect(self.translator.translate_text)
 
+
+    def update_window(self):
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.translator.language_box.removeItem(any)
+        self.translator.language_box.addItems(lang_list)
+
 class Window3(QWidget):
     '''lang to braille'''
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-
+        
+        # Label
+        label = QLabel("real-time common language input to Braille")
+        label.setStyleSheet("""
+            font-size: 16px;
+            font-weight: bold;      """)
+        
+        layout.addWidget(label)
         self.input_area = BrailleInputArea()
         self.translator = toBrailleTranslator(self.input_area)  # Pass the input area to the translator
         #self.keyboard = BrailleKeyboard(self.input_area)
         layout.addWidget(self.translator)
         # layout.addWidget(QLabel("Braille Keyboard"))
         # layout.addWidget(self.keyboard)
-        layout.addWidget(QLabel("Braille Input Area"))
+        layout.addWidget(QLabel("Common Text Input Area"))
         layout.addWidget(self.input_area)
 
         self.setLayout(layout)
@@ -381,6 +464,13 @@ class Window3(QWidget):
         self.input_area.textChanged.connect(self.translator.translate_text)
 
 
+    def update_window(self):
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.translator.language_box.removeItem(any)
+        self.translator.language_box.addItems(lang_list)
 
 
 class Window4(QWidget):
@@ -394,7 +484,24 @@ class Window4(QWidget):
         layout = QVBoxLayout()
 
         # Label
-        layout.addWidget(QLabel("This is Window 4"))
+        label = QLabel("add/edit/delete languages-braille")
+        label.setStyleSheet("""
+            font-size: 16px;
+            font-weight: bold;      """)
+        
+        layout.addWidget(label, alignment=Qt.AlignTop | Qt.AlignLeft)
+        layout.addWidget(QLabel("""Here you can add or edit language characters.\n
+    add language: 
+            better to click reset. 
+            then enter language name and enter equal characters between brackets.
+    edit characters: 
+            if you choose existant language from bottom language box you can edit 
+            character just by changing character in brackets.
+            like:    ⠹  =  {your-character} 
+    delete specific language:
+            just delete all entire characters and send empty text area with language name.
+                                """))
+    
 
         # Input field for method name
         self.method_name_input = QLineEdit()
@@ -419,7 +526,7 @@ class Window4(QWidget):
 
         # Options label and combo box
         options_layout = QVBoxLayout()
-        options_label = QLabel("Options")
+        options_label = QLabel("\n\n\n\n\n\n\n\n\n\nChoose Existant Language To Delete Or Edit:")
         options_layout.addWidget(options_label)
         self.option_combo = QComboBox()
         lang_list = list(translate.langs.keys())
@@ -443,6 +550,9 @@ class Window4(QWidget):
 
     def send_text(self):
         method_name = self.method_name_input.text()
+        if (' ' in  method_name) or method_name=='' :
+            QMessageBox.warning(self, "Wrong Language name", "Please ensure entered language name is correct.")
+            return
         self.new_lang_name = method_name
         text = self.text_input.toPlainText()
         self.add_text(self.new_lang_name, text)
@@ -451,7 +561,7 @@ class Window4(QWidget):
 
     def add_text(self ,  method_name , text):
         # Custom function to handle the method name and text
-        # print(f'\n\n3223   methodname ={method_name} , text = {text} 3223\n\n')
+
         self.alarm = translate.add_lang(method_name , text)
         self.show_popup()
 
@@ -465,6 +575,7 @@ class Window4(QWidget):
     def option_changed(self, index):
         option_text = self.option_custom_func(self.option_combo.itemText(index))
         self.text_input.setText(option_text)
+        self.method_name_input.setText(self.option_combo.itemText(index))
 
     def option_custom_func(self, option_index):
         # Custom function to return a text based on the option
@@ -480,7 +591,12 @@ class Window4(QWidget):
         return option_texts.get(option_index, self.default_text)
 
     def update_options(self, new_item):
-        self.option_combo.addItem(new_item)
+        # self.option_combo.addItem(new_item)
+        lang_list = list(translate.langs.keys())
+        lang_list.insert(0 , 'languages')
+        for any in range(len(lang_list) , -1 , -1):
+            self.option_combo.removeItem(any)
+        self.option_combo.addItems(lang_list)
 
 
 
@@ -506,15 +622,26 @@ class MainWindow(QMainWindow):
         self.create_taskbar()
 
     def create_taskbar(self):
-        self.taskbar = self.menuBar().addMenu("Windows")
-        self.add_taskbar_action("Window 1", 0)
-        self.add_taskbar_action("Window 2", 1)
-        self.add_taskbar_action("Window 3", 2)
-        self.add_taskbar_action("Window 4", 3)
+        self.taskbar = self.menuBar().addMenu("options")
+        self.add_taskbar_action("pdf to pdf translator", 0)
+        self.add_taskbar_action("real-time Braille input to common language", 1)
+        self.add_taskbar_action("real-time common language input to Braille", 2)
+        self.add_taskbar_action("add/edit/delete languages-braille", 3)
+            # Add Exit option
+        exit_action = self.taskbar.addAction("Exit")
+        exit_action.triggered.connect(QApplication.quit)
 
     def add_taskbar_action(self, name, index):
         action = self.taskbar.addAction(name)
         action.triggered.connect(lambda: self.stacked_widget.setCurrentIndex(index))
+        action.triggered.connect(lambda: self.switch_window(index))
+
+
+    def switch_window(self, index):
+        self.stacked_widget.setCurrentIndex(index)
+        current_widget = self.stacked_widget.currentWidget()
+        if hasattr(current_widget, 'update_window'):
+            current_widget.update_window()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
