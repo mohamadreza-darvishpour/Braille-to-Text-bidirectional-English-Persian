@@ -81,10 +81,6 @@ class BrailleTranslator(QWidget):
         super().__init__()
         self.input_area = input_area
 
-        # self.language_input = QLineEdit()
-        # self.language_input.setPlaceholderText("Enter language for translation")
-
-
         # language selection options
         self.language_box = QComboBox()
         temp_lang_list  = list(translate.langs.keys())
@@ -118,7 +114,6 @@ class BrailleTranslator(QWidget):
         clipboard.setText(self.translated_text.text())
 
     def translate_text(self):
-        # Get the text from the input area
         braille_text = self.input_area.get_text()
         language = self.language_box.currentText()  # Get the language from the QLineEdit
         if language=='Languages' : 
@@ -299,7 +294,7 @@ class Window1(QWidget):
         source_lang = self.language_combo1.currentText()
         target_lang = self.language_combo2.currentText()
 
-        # Open the original PDF and create a new PDF for output
+        # Open the original PDF and create a new doc for output
         original_pdf = fitz.open(self.pdf_file_path)
         doc = pymupdf.Document()
 
@@ -339,12 +334,12 @@ class Window1(QWidget):
         self.drop_label.setStyleSheet(self.aqua_style())
         self.drop_label.setAcceptDrops(False)
 
-        # Mouse press event to initiate dragging
+        #Mouse press event to initiate dragging
         def mousePressEvent(event):
             if event.button() == Qt.LeftButton:
                 self.drag_start_position = event.pos()
 
-        # Mouse move event to start dragging
+        #Mouse move event to start dragging
         def mouseMoveEvent(event):
             if event.buttons() & Qt.LeftButton:
                 if (event.pos() - self.drag_start_position).manhattanLength() < QApplication.startDragDistance():
@@ -410,7 +405,7 @@ class Window2(QWidget):
         self.keyboard = BrailleKeyboard(self.input_area)
         
         
-                # Label
+        #Label
         label = QLabel("real-time Braille input to common language")
         label.setStyleSheet("""
             font-size: 16px;
@@ -429,7 +424,6 @@ class Window2(QWidget):
 
 
     def update_window(self):
-        # self.option_combo.addItem(new_item)
         lang_list = list(translate.langs.keys())
         lang_list.insert(0 , 'languages')
         for any in range(len(lang_list) , -1 , -1):
@@ -451,16 +445,13 @@ class Window3(QWidget):
         layout.addWidget(label)
         self.input_area = BrailleInputArea()
         self.translator = toBrailleTranslator(self.input_area)  # Pass the input area to the translator
-        #self.keyboard = BrailleKeyboard(self.input_area)
         layout.addWidget(self.translator)
-        # layout.addWidget(QLabel("Braille Keyboard"))
-        # layout.addWidget(self.keyboard)
         layout.addWidget(QLabel("Common Text Input Area"))
         layout.addWidget(self.input_area)
 
         self.setLayout(layout)
 
-        # Connect textChanged signal to update translation
+        #connect textChanged signal to update translation
         self.input_area.textChanged.connect(self.translator.translate_text)
 
 
@@ -503,28 +494,28 @@ class Window4(QWidget):
                                 """))
     
 
-        # Input field for method name
+        # input for method name
         self.method_name_input = QLineEdit()
         self.method_name_input.setPlaceholderText("Enter name of new language or language to edit.")
         layout.addWidget(self.method_name_input)
         self.method_name_input.textChanged.connect(self.new_lang_name)
 
-        # Input text field with default text
+        #input text field with def text
         self.text_input = QTextEdit(self.default_text)
         self.text_input.setFixedHeight(200)  # Set the preferred height to make it bigger
         layout.addWidget(self.text_input)
 
-        # Button to reset text
+        # button to reset text
         self.reset_button = QPushButton("Reset Text")
         self.reset_button.clicked.connect(self.reset_text)
         layout.addWidget(self.reset_button)
 
-        # Button to send text to custom function
+        # button to send text to  function
         self.send_button = QPushButton("Send Text")
         self.send_button.clicked.connect(self.send_text)
         layout.addWidget(self.send_button)
 
-        # Options label and combo box
+        # Options label and combobox
         options_layout = QVBoxLayout()
         options_label = QLabel("\n\n\n\n\n\n\n\n\n\nChoose Existant Language To Delete Or Edit:")
         options_layout.addWidget(options_label)
@@ -560,7 +551,7 @@ class Window4(QWidget):
         self.reset_text()
 
     def add_text(self ,  method_name , text):
-        # Custom function to handle the method name and text
+        #handle the method name and text
 
         self.alarm = translate.add_lang(method_name , text)
         self.show_popup()
@@ -578,7 +569,7 @@ class Window4(QWidget):
         self.method_name_input.setText(self.option_combo.itemText(index))
 
     def option_custom_func(self, option_index):
-        # Custom function to return a text based on the option
+        #return a text to the option
         option_texts = {  'languages' : translate.alphabet_string_exam}
         for lang_key in translate.langs.keys() :
             string = ''
@@ -586,12 +577,10 @@ class Window4(QWidget):
                 if key == '⠀': key = 'space'
                 string +='  ' + key + '  =  {' + value +'},\n'
             option_texts[lang_key] = string
-        # option_texts[self.new_lang_name] = option
 
         return option_texts.get(option_index, self.default_text)
 
     def update_options(self, new_item):
-        # self.option_combo.addItem(new_item)
         lang_list = list(translate.langs.keys())
         lang_list.insert(0 , 'languages')
         for any in range(len(lang_list) , -1 , -1):

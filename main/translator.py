@@ -1,4 +1,5 @@
 
+#default languages data
 lang_braille_base_dict ={
         'persian' : {
     '\n': '\n',
@@ -95,6 +96,8 @@ lang_braille_base_dict ={
             '⠵': 'z',
            }
     }
+
+#default signs data
 num_sign = {
     'english_numbers' : 
     {
@@ -145,6 +148,7 @@ num_sign = {
 
 
 def find_value_by_key(dictionary, key):
+    #to search in braille lang dictionary
     if key in dictionary:
         return dictionary[key]
     else:
@@ -152,6 +156,7 @@ def find_value_by_key(dictionary, key):
 
 
 def find_key_by_value(dictionary, value):
+    #to saerch in braille lang dictionary
     for key, val in dictionary.items():
         if val == value:
             return key
@@ -173,6 +178,7 @@ class translator():
             string = 'could not find language chars...' 
             return string
         string  = ''
+        #handle number and signs too
         for any in text:
             print(f'\n  ________  \n')
 
@@ -229,6 +235,7 @@ class translator():
         return string
 
     def lang_to_braille(self , lang='english' , text='' ):
+        #translate any language to braille
         is_num_writing = False  
         try:
             dict = self.langs[lang]
@@ -238,6 +245,7 @@ class translator():
         string  = '' 
         for any in text:
             temp = None
+            #handle numbers and sign 
             if(any in  '1234567890۱۲۳۴۵۶۷۸۹۰' and is_num_writing ==False ):
                 is_num_writing = True 
                 if(lang == 'persian'):
@@ -289,102 +297,3 @@ class translator():
             return f'{lang_name} added successfully.' 
         except:
             return f'not success to add new language. try again.'
-
-term = '''
-
-space  =  {t},
-⠁  =  {k},
-⠂  =  {m},
-⠃  =  {k},
-⠄  =  {l},
-⠅  =  {},
-⠆  =  {},
-⠇  =  {},
-⠈  =  {},
-⠉  =  {},
-⠊  =  {},
-⠋  =  {},
-⠌  =  {},
-⠍  =  {},
-⠎  =  {},
-⠏  =  {},
-⠐  =  {},
-⠑  =  {},
-⠒  =  {},
-⠓  =  {},
-⠔  =  {},
-⠕  =  {},
-⠖  =  {},
-⠗  =  {},
-⠘  =  {},
-⠙  =  {},
-⠚  =  {},
-⠛  =  {},
-⠜  =  {},
-⠝  =  {},
-⠞  =  {},
-⠟  =  {},
-⠠  =  {},
-⠡  =  {},
-⠢  =  {},
-⠣  =  {},
-⠤  =  {},
-⠥  =  {},
-⠦  =  {},
-⠧  =  {},
-⠨  =  {},
-⠩  =  {},
-⠪  =  {},
-⠫  =  {},
-⠬  =  {},
-⠭  =  {},
-⠮  =  {},
-⠯  =  {},
-⠰  =  {},
-⠱  =  {},
-⠲  =  {},
-⠳  =  {},
-⠴  =  {},
-⠵  =  {},
-⠶  =  {},
-⠷  =  {},
-⠸  =  {},
-⠹  =  {},
-⠺  =  {},
-⠻  =  {},
-⠼  =  {},
-⠽  =  {},
-⠾  =  {},
-⠿  =  {},
-⡀  =  {},
-⡁  =  {},
-⡂  =  {},
-⡃  =  {},
-⡄  =  {},
-⡅  =  {},
-⡆  =  {},
-⡇  =  {},
-⡈  =  {},
-⡉  =  {},
-⡊  =  {},
-⡋  =  {},
-⡌  =  {},
-⡍  =  {},
-⡎  =  {},
-⡏  =  {},
-⡐  =  {},
-⡑  =  {},
-⡒  =  {},
-⡓  =  {},
-⡕  =  {},
-⡔  =  {},
-⡗  =  {u},
-⡖  =  {y},
-⡘  =  {z}
-'''
-
-
-# d = translator() 
-# d.braille_to_lang('persian' , '⠗⠁⠓⠏⠽⠗⠺⠵')
-# d.lang_to_braille('persian' , 'سر و صدا ')
-# d.add_lang('spanish' , term)
