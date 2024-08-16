@@ -36,26 +36,7 @@ lang_braille_base_dict ={
     '⠺': 'و',
     '⠓': 'ه',
     '⠊': 'ی',
-    '⠁': '1',
-    '⠃': '2',    
-    '⠉': '3',    
-    '⠙': '4',    
-    '⠑': '5',  
-    '⠋': '6',  
-    '⠛': '7',  
-    '⠓': '8',  
-    '⠊': '9',  
-    '⠚': '0',  
-    '⠁': '۱',
-    '⠃': '۲',    
-    '⠉': '۳',    
-    '⠙': '۴',    
-    '⠑': '۵',  
-    '⠋': '۶',  
-    '⠛': '۷',  
-    '⠓': '۸',  
-    '⠊': '۹',  
-    '⠚': '۰',  
+
                     },
 
 'english' : {    
@@ -113,10 +94,54 @@ lang_braille_base_dict ={
             '⠽': 'y',              
             '⠵': 'z',
            }
-            }
+    }
+num_sign = {
+    'english_numbers' : 
+    {
+        
+    '⠁': '1',
+    '⠃': '2',    
+    '⠉': '3',    
+    '⠙': '4',    
+    '⠑': '5',  
+    '⠋': '6',  
+    '⠛': '7',  
+    '⠓': '8',  
+    '⠊': '9',  
+    '⠚': '0',  
+    },
+    'persian_numbers' : {
+    '⠁': '۱',
+    '⠃': '۲',    
+    '⠉': '۳',    
+    '⠙': '۴',    
+    '⠑': '۵',  
+    '⠋': '۶',  
+    '⠛': '۷',  
+    '⠓': '۸',  
+    '⠊': '۹',  
+    '⠚': '۰',  
 
+    },
+    'sign' : {
+
+        '⠼' : 'digit',
+        '⠰' : 'operation',
+
+    },
+    'math_sign' : {
+        '⠲' : '÷',
+        '⠖' : '+',
+        '⠦' : '×',
+        '⠶' : '=',
+        '⠤' : '-',
 
     }
+
+
+}
+
+    
 
 
 def find_value_by_key(dictionary, key):
@@ -136,9 +161,11 @@ def find_key_by_value(dictionary, value):
 class translator():
     langs = lang_braille_base_dict.copy()
     alphabet_string_exam = "\nspace  =  {},\n⠁  =  {},\n⠂  =  {},\n⠃  =  {},\n⠄  =  {},\n⠅  =  {},\n⠆  =  {},\n⠇  =  {},\n⠈  =  {},\n⠉  =  {},\n⠊  =  {},\n⠋  =  {},\n⠌  =  {},\n⠍  =  {},\n⠎  =  {},\n⠏  =  {},\n⠐  =  {},\n⠑  =  {},\n⠒  =  {},\n⠓  =  {},\n⠔  =  {},\n⠕  =  {},\n⠖  =  {},\n⠗  =  {},\n⠘  =  {},\n⠙  =  {},\n⠚  =  {},\n⠛  =  {},\n⠜  =  {},\n⠝  =  {},\n⠞  =  {},\n⠟  =  {},\n⠠  =  {},\n⠡  =  {},\n⠢  =  {},\n⠣  =  {},\n⠤  =  {},\n⠥  =  {},\n⠦  =  {},\n⠧  =  {},\n⠨  =  {},\n⠩  =  {},\n⠪  =  {},\n⠫  =  {},\n⠬  =  {},\n⠭  =  {},\n⠮  =  {},\n⠯  =  {},\n⠰  =  {},\n⠱  =  {},\n⠲  =  {},\n⠳  =  {},\n⠴  =  {},\n⠵  =  {},\n⠶  =  {},\n⠷  =  {},\n⠸  =  {},\n⠹  =  {},\n⠺  =  {},\n⠻  =  {},\n⠼  =  {},\n⠽  =  {},\n⠾  =  {},\n⠿  =  {},\n⡀  =  {},\n⡁  =  {},\n⡂  =  {},\n⡃  =  {},\n⡄  =  {},\n⡅  =  {},\n⡆  =  {},\n⡇  =  {},\n⡈  =  {},\n⡉  =  {},\n⡊  =  {},\n⡋  =  {},\n⡌  =  {},\n⡍  =  {},\n⡎  =  {},\n⡏  =  {},\n⡐  =  {},\n⡑  =  {},\n⡒  =  {},\n⡓  =  {},\n⡕  =  {},\n⡔  =  {},\n⡗  =  {},\n⡖  =  {},\n⡘  =  {}"
-
+    num_sign = num_sign.copy()
  
     def braille_to_lang(self , lang='english', text = '' ):
+        is_sign = False
+        is_digit = False
         try:
             dict = self.langs[lang]
         except:
@@ -147,11 +174,62 @@ class translator():
             return string
         string  = ''
         for any in text:
-            temp = find_value_by_key(dict , any )
-            string += temp 
+            print(f'\n  ________  \n')
+
+            if(any =='⠼'):
+                print(f'\n\n  ____   9   ____  \n\n')
+                is_digit = True
+                is_sign = False
+                
+            elif(any == '⠰'):
+                print(f'\n\n  ____   8   ____  \n\n')
+                is_sign = True 
+                is_digit = False 
+
+            elif(any == '⠀' or any==' '):
+                print(f'\n\n  ____   7   ____  \n\n')
+                is_sign = False 
+                is_digit = False
+            else:
+                print(f'\n\n  ____   6   ____  \n\n')
+                pass
+
+            if(any =='⠰' or any == '⠼'):
+                print(f'\n\n  ____   55   ____  \n\n')
+                pass
+
+            elif(any==  '⠀' or any==' '):
+                print(f'\n\n  ____   4   ____  \n\n')
+                is_sign = False 
+                is_digit = False
+                string += ' '
+                    
+            elif (is_digit==True and is_sign==False):
+                print(f'\n\n  ____   3   ____  \n\n')
+                if(lang=='persian'):
+                    temp = find_value_by_key(self.num_sign['persian_numbers'], any)
+                else:
+                    temp = find_value_by_key(self.num_sign['english_numbers'], any)
+                string += temp 
+        
+            elif(is_digit==False and is_sign==True):
+                print(f'\n\n  ____   2   ____  \n\n')
+                temp = find_value_by_key(self.num_sign['math_sign'], any)
+                string += temp
+                is_sign = False
+
+            else :
+                print(f'\n\n  ____   1   ____  \n\n')
+                temp = find_value_by_key(dict , any )
+                string += temp 
+                is_sign = False 
+                is_digit = False  
+            
+
         return string
 
     def lang_to_braille(self , lang='english' , text='' ):
+        is_num_writing = False  
         try:
             dict = self.langs[lang]
         except:
