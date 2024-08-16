@@ -237,7 +237,32 @@ class translator():
             return string
         string  = '' 
         for any in text:
-            temp = find_key_by_value(dict , any)
+            temp = None
+            if(any in  '1234567890۱۲۳۴۵۶۷۸۹۰' and is_num_writing ==False ):
+                is_num_writing = True 
+                if(lang == 'persian'):
+                    temp = find_key_by_value(self.num_sign['persian_numbers'], any)
+                else:
+                    temp = find_key_by_value(self.num_sign['english_numbers'], any)
+                temp = f'⠼{temp}'
+
+            elif(any in  '1234567890۱۲۳۴۵۶۷۸۹۰' and is_num_writing ==True ):
+                is_operation_writing = False 
+                if(lang == 'persian'):
+                    temp = find_key_by_value(self.num_sign['persian_numbers'], any)
+                else:
+                    temp = find_key_by_value(self.num_sign['english_numbers'], any)
+            elif (any ==' ' or any == '⠀'):
+                temp = '⠀'
+                is_num_writing = False 
+            
+            elif(any in '+=×-÷'):
+                temp = find_key_by_value(self.num_sign['math_sign'], any)
+                temp = f'⠰{temp}'
+                is_num_writing = False 
+            else:
+                temp = find_key_by_value(dict , any)
+                is_num_writing = False
             string += temp 
         return string
 
