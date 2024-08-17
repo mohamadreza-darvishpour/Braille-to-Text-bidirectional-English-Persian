@@ -3,7 +3,12 @@
 lang_braille_base_dict ={
         'persian' : {
     '\n': '\n',
-    '⠀': ' ',
+    #some unknown word equal in braille
+    # ' ' : '.',
+    # '⠺' : 'ؤ',
+    # '⠊' : 'ئ',
+    # '⠷' : 'ء',
+    #end some unknown wo...
     '⠜': 'آ',
     '⠁': 'ا',
     '⠃': 'ب',
@@ -37,37 +42,18 @@ lang_braille_base_dict ={
     '⠺': 'و',
     '⠓': 'ه',
     '⠊': 'ی',
+    '⠲' : '.',
+    '⠂' : ',',
+    '⠆' : ';',
+    '⠦' : '?',
+    '⠖' : '!',
+    ' ': ' ',
+    '⠀': ' ',
 
                     },
 
 'english' : {    
-            '⠀': ' ',            
-            '⠁': 'A',
-            '⠃': 'B',    
-            '⠉': 'C',    
-            '⠙': 'D',    
-            '⠑': 'E',  
-            '⠋': 'F',  
-            '⠛': 'G',  
-            '⠓': 'H',  
-            '⠊': 'I',  
-            '⠚': 'J',  
-            '⠅': 'K',  
-            '⠇': 'L',  
-            '⠍': 'M',  
-            '⠝': 'N',  
-            '⠕': 'O',  
-            '⠏': 'P',  
-            '⠟': 'Q',  
-            '⠗': 'R',  
-            '⠎': 'S',  
-            '⠞': 'T',  
-            '⠥': 'U',  
-            '⠧': 'V',  
-            '⠺': 'W',  
-            '⠭': 'X',  
-            '⠽': 'Y',  
-            '⠵': 'Z',  
+        
             '⠁': 'a',
             '⠃': 'b',                
             '⠉': 'c',                
@@ -94,7 +80,16 @@ lang_braille_base_dict ={
             '⠭': 'x',              
             '⠽': 'y',              
             '⠵': 'z',
+            '⠲' : '.',
+            '⠂' : ',',
+            '⠆' : ';',
+            '⠦' : '?',
+            '⠖' : '!',
+            '\n' : '\n' , 
+            ' ': ' ',
+            '⠀': ' ',
            }
+   
     }
 
 #default signs data
@@ -157,15 +152,27 @@ def find_value_by_key(dictionary, key):
 
 def find_key_by_value(dictionary, value):
     #to saerch in braille lang dictionary
+    
+    if(value in "ؤئء"):
+        if value =='ء' :
+            return '⠷'
+        elif value =='ؤ' : 
+            return '⠺'
+        else:
+            return '⠊'
+    else: 
+        pass
     for key, val in dictionary.items():
         if val == value:
             return key
+    print(f'____________\n{key} : {value} \n\n')
     return f'<{value}>'
 
 
 class translator():
+
     langs = lang_braille_base_dict.copy()
-    alphabet_string_exam = "\nspace  =  {},\n⠁  =  {},\n⠂  =  {},\n⠃  =  {},\n⠄  =  {},\n⠅  =  {},\n⠆  =  {},\n⠇  =  {},\n⠈  =  {},\n⠉  =  {},\n⠊  =  {},\n⠋  =  {},\n⠌  =  {},\n⠍  =  {},\n⠎  =  {},\n⠏  =  {},\n⠐  =  {},\n⠑  =  {},\n⠒  =  {},\n⠓  =  {},\n⠔  =  {},\n⠕  =  {},\n⠖  =  {},\n⠗  =  {},\n⠘  =  {},\n⠙  =  {},\n⠚  =  {},\n⠛  =  {},\n⠜  =  {},\n⠝  =  {},\n⠞  =  {},\n⠟  =  {},\n⠠  =  {},\n⠡  =  {},\n⠢  =  {},\n⠣  =  {},\n⠤  =  {},\n⠥  =  {},\n⠦  =  {},\n⠧  =  {},\n⠨  =  {},\n⠩  =  {},\n⠪  =  {},\n⠫  =  {},\n⠬  =  {},\n⠭  =  {},\n⠮  =  {},\n⠯  =  {},\n⠰  =  {},\n⠱  =  {},\n⠲  =  {},\n⠳  =  {},\n⠴  =  {},\n⠵  =  {},\n⠶  =  {},\n⠷  =  {},\n⠸  =  {},\n⠹  =  {},\n⠺  =  {},\n⠻  =  {},\n⠼  =  {},\n⠽  =  {},\n⠾  =  {},\n⠿  =  {},\n⡀  =  {},\n⡁  =  {},\n⡂  =  {},\n⡃  =  {},\n⡄  =  {},\n⡅  =  {},\n⡆  =  {},\n⡇  =  {},\n⡈  =  {},\n⡉  =  {},\n⡊  =  {},\n⡋  =  {},\n⡌  =  {},\n⡍  =  {},\n⡎  =  {},\n⡏  =  {},\n⡐  =  {},\n⡑  =  {},\n⡒  =  {},\n⡓  =  {},\n⡕  =  {},\n⡔  =  {},\n⡗  =  {},\n⡖  =  {},\n⡘  =  {}"
+    alphabet_string_exam = "\nspace  =  {},\n⠁  =  {},\n⠂  =  {},\n⠃  =  {},\n⠄  =  {},\n⠅  =  {},\n⠆  =  {},\n⠇  =  {},\n⠈  =  {},\n⠉  =  {},\n⠊  =  {},\n⠋  =  {},\n⠌  =  {},\n⠍  =  {},\n⠎  =  {},\n⠏  =  {},\n⠐  =  {},\n⠑  =  {},\n⠒  =  {},\n⠓  =  {},\n⠔  =  {},\n⠕  =  {},\n⠖  =  {},\n⠗  =  {},\n⠘  =  {},\n⠙  =  {},\n⠚  =  {},\n⠛  =  {},\n⠜  =  {},\n⠝  =  {},\n⠞  =  {},\n⠟  =  {},\n⠠  =  {},\n⠡  =  {},\n⠢  =  {},\n⠣  =  {},\n⠤  =  {},\n⠥  =  {},\n⠦  =  {},\n⠧  =  {},\n⠨  =  {},\n⠩  =  {},\n⠪  =  {},\n⠫  =  {},\n⠬  =  {},\n⠭  =  {},\n⠮  =  {},\n⠯  =  {},\n⠰  =  {},\n⠱  =  {},\n⠲  =  {},\n⠳  =  {},\n⠴  =  {},\n⠵  =  {},\n⠶  =  {},\n⠷  =  {},\n⠸  =  {},\n⠹  =  {},\n⠺  =  {},\n⠻  =  {},\n⠼  =  {},\n⠽  =  {},\n⠾  =  {},\n⠿  =  {},\n⡀  =  {},\n⡁  =  {},\n⡂  =  {},\n⡃  =  {},\n⡄  =  {},\n⡅  =  {},\n⡆  =  {},\n⡇  =  {},\n⡈  =  {},\n⡉  =  {},\n⡊  =  {},\n⡋  =  {},\n⡌  =  {},\n⡍  =  {},\n⡎  =  {},\n⡏  =  {},\n⡐  =  {},\n⡑  =  {},\n⡒  =  {},\n⡓  =  {},\n⡕  =  {},\n⡔  =  {},\n⡗  =  {},\n⡖  =  {},\n⡘  =  {},\n⠲  =  {.},\n⠂  =  {,},\n⠆  =  {;},\n⠦  =  {?},\n⠖  =  {!}"
     num_sign = num_sign.copy()
  
     def braille_to_lang(self , lang='english', text = '' ):
@@ -269,7 +276,7 @@ class translator():
                 temp = f'⠰{temp}'
                 is_num_writing = False 
             else:
-                temp = find_key_by_value(dict , any)
+                temp = find_key_by_value(dict , any.lower())
                 is_num_writing = False
             string += temp 
         return string
@@ -292,7 +299,9 @@ class translator():
                 temp = item.split('=')
                 if(len(temp)>1 and temp[0]!= '' ):
                     temp_dict[temp[0]] = temp[1]
-            temp_dict['⠀'] = temp_dict.pop('space' , ' ')
+            temp_dict['⠀'] = temp_dict.pop('space1' , ' ')
+            temp_dict[' '] = temp_dict.pop('space2' , ' ')
+            temp_dict['\n'] = '\n'
             self.langs[lang_name] = temp_dict
             return f'{lang_name} added successfully.' 
         except:

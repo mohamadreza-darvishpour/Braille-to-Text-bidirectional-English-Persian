@@ -5,8 +5,6 @@ from translator import translator
 from PyQt5.QtCore import Qt  , QPoint
 import fitz
 import pymupdf
-
-from fitz import Font
 from PyQt5.QtGui import QDrag ,QPixmap  , QPainter , QIcon
 
 
@@ -541,7 +539,7 @@ class Window4(QWidget):
 
     def send_text(self):
         method_name = self.method_name_input.text()
-        if (' ' in  method_name) or method_name=='' :
+        if (' ' in  method_name or method_name=='' or method_name=='languages' ):
             QMessageBox.warning(self, "Wrong Language name", "Please ensure entered language name is correct.")
             return
         self.new_lang_name = method_name
@@ -574,8 +572,10 @@ class Window4(QWidget):
         for lang_key in translate.langs.keys() :
             string = ''
             for key,value in translate.langs[lang_key].items() :
-                if key == '⠀': key = 'space'
-                string +='  ' + key + '  =  {' + value +'},\n'
+                if key == '⠀': key = 'space1'
+                if key == ' ': key = 'space2'
+                if(not key=='\n'):
+                    string +='  ' + key + '  =  {'+f"{value}"+'},\n'
             option_texts[lang_key] = string
 
         return option_texts.get(option_index, self.default_text)

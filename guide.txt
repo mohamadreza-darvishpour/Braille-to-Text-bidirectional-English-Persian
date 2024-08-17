@@ -1,0 +1,7 @@
+to run program 
+read the readme.md 
+
+then 
+
+first install requirements. 
+then run the gui.py in 'main' folder.
